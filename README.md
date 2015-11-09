@@ -10,3 +10,5 @@ This repository contains:
 - modelshaders
 - S44 style OO defs
 - and a bunch of other useful custom widgets and gadgets
+
+Check out the wiki for detailed information.
