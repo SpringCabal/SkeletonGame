@@ -19,10 +19,10 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
--- GG.Attributes.UpdateLineOfSight(unitID, multiplier, [key])
--- GG.Attributes.UpdateBuildSpeed(unitID, multiplier, [key])
--- GG.Attributes.UpdateWeaponReload(unitID, multiplier, [key])
--- GG.Attributes.UpdateMoveSpeed(unitID, multiplier, [key])
+-- GG.Attributes.UpdateLineOfSightMult(unitID, multiplier, [key])
+-- GG.Attributes.UpdateBuildSpeedMult(unitID, multiplier, [key])
+-- GG.Attributes.UpdateWeaponReloadMult(unitID, multiplier, [key])
+-- GG.Attributes.UpdateMoveSpeedMult(unitID, multiplier, [key])
 -- 
 -- The optional key is used to combine multipliers from multiple sources.
 --
@@ -64,7 +64,7 @@ local function UpdateLineOfSight(unitID, sightFactor)
 		}
 	end
 	
-	local state = origUnitDefBuildSpeed[unitDefID]
+	local state = origUnitDefLineOfSight[unitDefID]
 	
 	spSetUnitSensorRadius(unitID, "los",    state.los    * sightFactor)
 	spSetUnitSensorRadius(unitID, "airLos", state.airLos * sightFactor)
@@ -122,12 +122,19 @@ local function UpdatePausedReload(unitID, unitDefID, gameFrame)
 		local reloadState = spGetUnitWeaponState(unitID, i , 'reloadState')
 		if reloadState then
 			local reloadTime  = spGetUnitWeaponState(unitID, i , 'reloadTime')
-			local newReload = 100000 -- set a high reload time so healthbars don't judder. NOTE: math.huge is TOO LARGE
+			 -- set a high reload time so healthbars don't judder. NOTE: math.huge is TOO LARGE
+			local newReload = 100000
 			if reloadState < 0 then -- unit is already reloaded, so set unit to almost reloaded
-				spSetUnitWeaponState(unitID, i, {reloadTime = newReload, reloadState = gameFrame+RELOAD_UPDATE_PERIOD+1})
+				spSetUnitWeaponState(unitID, i, {
+					reloadTime = newReload, 
+					reloadState = gameFrame + RELOAD_UPDATE_PERIOD + 1
+				})
 			else
-				local nextReload = gameFrame+(reloadState-gameFrame)*newReload/reloadTime
-				spSetUnitWeaponState(unitID, i, {reloadTime = newReload, reloadState = nextReload+RELOAD_UPDATE_PERIOD})
+				local nextReload = gameFrame + (reloadState - gameFrame) * newReload/reloadTime
+				spSetUnitWeaponState(unitID, i, {
+					reloadTime = newReload, 
+					reloadState = nextReload+RELOAD_UPDATE_PERIOD
+				})
 			end
 		end
 	end
@@ -185,9 +192,16 @@ local function UpdateReloadSpeed(unitID, speedFactor)
 			local newReload = w.reload/speedFactor
 			local nextReload = gameFrame+(reloadState-gameFrame)*newReload/reloadTime
 			if w.burstRate then
-				spSetUnitWeaponState(unitID, i, {reloadTime = newReload, reloadState = nextReload, burstRate = w.burstRate/speedFactor})
+				spSetUnitWeaponState(unitID, i, {
+					reloadTime = newReload, 
+					reloadState = nextReload, 
+					burstRate = w.burstRate/speedFactor
+				})
 			else
-				spSetUnitWeaponState(unitID, i, {reloadTime = newReload, reloadState = nextReload})
+				spSetUnitWeaponState(unitID, i, {
+					reloadTime = newReload, 
+					reloadState = nextReload
+				})
 			end
 		end
 	end
@@ -210,6 +224,7 @@ local function UpdateMovementSpeed(unitID, speedFactor, accelerationFactor, turn
 			origSpeed = ud.speed,
 			origReverseSpeed = (moveData.name == "ground") and moveData.maxReverseSpeed or ud.speed,
 			origTurnRate = ud.turnRate,
+			origTurnAccel = ((moveData.name == "ground") and moveData.turnAccel) or ud.turnRate,
 			origMaxAcc = ud.maxAcc,
 			origMaxDec = ud.maxDec,
 			movetype = -1,
@@ -286,7 +301,7 @@ local function UpdateMovementSpeed(unitID, speedFactor, accelerationFactor, turn
 				turnRate        = state.origTurnRate     * turnFactor,
 				accRate         = accRate,
 				decRate         = state.origMaxDec       * decFactor,
-				turnAccel       = state.origTurnRate     * turnAccelFactor,
+				turnAccel       = state.origTurnAccel    * turnAccelFactor,
 			}
 			spSetGroundMoveTypeData(unitID, attribute)
 		end
@@ -317,7 +332,7 @@ local function UpdateMultTable(multTable, unitID, mult, key)
 	return true
 end
 
-local function Attribute_UpdateLineOfSight(unitID, mult, key)
+local function Attribute_UpdateLineOfSightMult(unitID, mult, key)
 	if UpdateMultTable(unitLos, unitID, mult, key) then
 		local totalFactor = 1
 		for _, factor in pairs(unitLos[unitID]) do
@@ -327,7 +342,7 @@ local function Attribute_UpdateLineOfSight(unitID, mult, key)
 	end
 end
 
-local function Attribute_UpdateBuildSpeed(unitID, mult, key)
+local function Attribute_UpdateBuildSpeedMult(unitID, mult, key)
 	if UpdateMultTable(unitBuildSpeed, unitID, mult, key) then
 		local totalFactor = 1
 		for _, factor in pairs(unitBuildSpeed[unitID]) do
@@ -337,7 +352,7 @@ local function Attribute_UpdateBuildSpeed(unitID, mult, key)
 	end
 end
 
-local function Attribute_UpdateWeaponReload(unitID, mult, key)
+local function Attribute_UpdateWeaponReloadMult(unitID, mult, key)
 	if UpdateMultTable(unitReload, unitID, mult, key) then
 		local totalFactor = 1
 		for _, factor in pairs(unitReload[unitID]) do
@@ -347,7 +362,7 @@ local function Attribute_UpdateWeaponReload(unitID, mult, key)
 	end
 end
 
-local function Attribute_UpdateMoveSpeed(unitID, mult, key)
+local function Attribute_UpdateMoveSpeedMult(unitID, mult, key)
 	if UpdateMultTable(unitMoveSpeed, unitID, mult, key) then
 		local totalFactor = 1
 		for _, factor in pairs(unitMoveSpeed[unitID]) do
@@ -371,10 +386,10 @@ end
 
 function gadget:Initialize()
 	GG.Attributes = {
-		UpdateLineOfSight  = Attribute_UpdateLineOfSight,
-		UpdateBuildSpeed   = Attribute_UpdateBuildSpeed,
-		UpdateWeaponReload = Attribute_UpdateWeaponReload,
-		UpdateMoveSpeed    = Attribute_UpdateMoveSpeed,
+		UpdateLineOfSightMult  = Attribute_UpdateLineOfSightMult,
+		UpdateBuildSpeedMult   = Attribute_UpdateBuildSpeedMult,
+		UpdateWeaponReloadMult = Attribute_UpdateWeaponReloadMult,
+		UpdateMoveSpeedMult    = Attribute_UpdateMoveSpeedMult,
 	}
 end
 
