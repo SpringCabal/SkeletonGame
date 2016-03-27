@@ -187,7 +187,6 @@ local function UpdateReloadSpeed(unitID, speedFactor)
 		else
 			if unitReloadPaused[unitID] then
 				unitReloadPaused[unitID] = nil
-				spSetUnitRulesParam(unitID, "reloadPaused", -1, INLOS_ACCESS)
 			end
 			local newReload = w.reload/speedFactor
 			local nextReload = gameFrame+(reloadState-gameFrame)*newReload/reloadTime
@@ -328,38 +327,34 @@ local function UpdateMultTable(multTable, unitID, mult, key)
 	key = key or -1
 	multTable[unitID] = multTable[unitID] or {}
 	
-	multTable[unitID][key] = mult
+	if mult == 1 then
+		multTable[unitID][key] = nil
+	else
+		multTable[unitID][key] = mult
+	end
 	return true
 end
 
-local function Attribute_UpdateLineOfSightMult(unitID, mult, key)
-	if UpdateMultTable(unitLos, unitID, mult, key) then
+local function UpdateParameter(unitID, mult, key, paramTable, paramFunction)
+	if UpdateMultTable(paramTable, unitID, mult, key) then
 		local totalFactor = 1
-		for _, factor in pairs(unitLos[unitID]) do
+		for _, factor in pairs(paramTable[unitID]) do
 			totalFactor = totalFactor * factor
 		end
-		UpdateLineOfSight(unitID, totalFactor)
+		paramFunction(unitID, totalFactor)
 	end
+end
+
+local function Attribute_UpdateLineOfSightMult(unitID, mult, key)
+	UpdateParameter(unitID, mult, key, unitLos, UpdateLineOfSight)
 end
 
 local function Attribute_UpdateBuildSpeedMult(unitID, mult, key)
-	if UpdateMultTable(unitBuildSpeed, unitID, mult, key) then
-		local totalFactor = 1
-		for _, factor in pairs(unitBuildSpeed[unitID]) do
-			totalFactor = totalFactor * factor
-		end
-		UpdateBuildSpeed(unitID, totalFactor)
-	end
+	UpdateParameter(unitID, mult, key, unitBuildSpeed, UpdateBuildSpeed)
 end
 
 local function Attribute_UpdateWeaponReloadMult(unitID, mult, key)
-	if UpdateMultTable(unitReload, unitID, mult, key) then
-		local totalFactor = 1
-		for _, factor in pairs(unitReload[unitID]) do
-			totalFactor = totalFactor * factor
-		end
-		UpdateReloadSpeed(unitID, totalFactor)
-	end
+	UpdateParameter(unitID, mult, key, unitReload, UpdateReloadSpeed)
 end
 
 local function Attribute_UpdateMoveSpeedMult(unitID, mult, key)
@@ -368,6 +363,7 @@ local function Attribute_UpdateMoveSpeedMult(unitID, mult, key)
 		for _, factor in pairs(unitMoveSpeed[unitID]) do
 			totalFactor = totalFactor * factor
 		end
+		-- In the future the interface could modify accel and turn rate independantly
 		UpdateMovementSpeed(unitID, totalFactor, totalFactor, totalFactor)
 	end
 end
