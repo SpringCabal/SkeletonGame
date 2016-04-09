@@ -12,3 +12,6 @@ This repository contains:
 - and a bunch of other useful custom widgets and gadgets
 
 Check out the wiki for detailed information.
+
+
+[![Join the chat at https://gitter.im/SpringCabal/SkeletonGame](https://badges.gitter.im/SpringCabal/SkeletonGame.svg)](https://gitter.im/SpringCabal/SkeletonGame?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
