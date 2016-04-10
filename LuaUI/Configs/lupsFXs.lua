@@ -1,3 +1,4 @@
+Spring.Utilities = Spring.Utilities or {}
 VFS.Include("LuaRules/Utilities/tablefunctions.lua")
 
 ----------------------------------------------------------------------------
