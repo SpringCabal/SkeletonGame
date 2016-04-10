@@ -3,8 +3,8 @@
 
 function widget:GetInfo()
 	return {
-		name      = "Disable camera control",
-		desc      = "Disables camera zooming and panning",
+		name      = "Camera control",
+		desc      = "Controls camera zooming and panning",
 		author    = "gajop",
 		date      = "WIP",
 		license   = "GPLv2",
@@ -40,7 +40,7 @@ function widget:Initialize()
         dx = 0,
         name = "spring",
     }
-    Spring.SetCameraState(s, 0)
+--     Spring.SetCameraState(s, 0)
 end
 
 function widget:Shutdown()
