@@ -10,13 +10,18 @@ function widget:GetInfo()
   }
 end
 
-function widget:Initialize()
-    -- check if scenario editor is run in play mode
-    local devMode = (tonumber(Spring.GetModOptions().play_mode) or 0) == 0
-    if not devMode or true then
-        -- NOTICE: uncomment this to disable the console
-        --Spring.SendCommands("Console 0")
+local gameMode
+local function SetGameMode(gameMode)
+    if gameMode == "play" then
+        Spring.SendCommands("Console 0")
+    else
+        Spring.SendCommands("Console 1")
     end
+end
+
+function widget:Initialize()
+    gameMode = Spring.GetGameRulesParam("gameMode")
+    SetGameMode(gameMode)
 
     -- remove Springs default UI stuff
     Spring.SendCommands("ResBar 0", "ToolTip 0", "Clock 0", "Info 0")
@@ -28,4 +33,12 @@ end
 -- sets status to ready & hide pre-game UI
 function widget:GameSetup()
     return true, true
+end
+
+function widget:Update()
+    local newGameMode = Spring.GetGameRulesParam("gameMode")
+    if gameMode ~= newGameMode then
+        gameMode = newGameMode
+        SetGameMode(gameMode)
+    end
 end

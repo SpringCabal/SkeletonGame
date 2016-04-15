@@ -18,7 +18,7 @@ local x,y,h
 local purple = "\255\255\10\255"
 local white = "\255\255\255\255"
 
-function SetBindings()
+local function SetBindings()
     local binds = { --real keybinds
         
         "Any+pause  pause",
@@ -49,16 +49,22 @@ function SetBindings()
     end
 end
 
-function widget:Initialize()
-    local devMode = false
-    if not devMode then 
-        -- NOTICE: uncomment this for release
-        --Spring.SendCommands("unbindall") --muahahahaha
-        --Spring.SendCommands("unbindkeyset enter chat") --because because.
+local gameMode
+local function SetGameMode(gameMode)
+    if gameMode == "play" then
+        Spring.SendCommands("unbindall") --muahahahaha
+        Spring.SendCommands("unbindkeyset enter chat") --because because.
+        SetBindings()
+    else
+        Spring.SendCommands("bindkeyset enter chat")
     end
+end
+
+function widget:Initialize()
+    gameMode = Spring.GetGameRulesParam("gameMode")
+    SetGameMode(gameMode)
     SetBindings()
-    
-    
+
     bindText = { -- keybinds told to player
         --purple .. "Q : " .. white .. "swap pull / push",
         --purple .. "A : " .. white .. "stop shooting",
@@ -79,7 +85,7 @@ function widget:Initialize()
 	end
 	Chili = WG.Chili
 	screen0 = Chili.Screen0
-    
+
     MakeBindingText()
 end
 
@@ -115,4 +121,12 @@ function  AddLine(text,x,y,h)
         parent = screen0,
         caption = text,
     }
+end
+
+function widget:Update()
+    local newGameMode = Spring.GetGameRulesParam("gameMode")
+    if gameMode ~= newGameMode then
+        gameMode = newGameMode
+        SetGameMode(gameMode)
+    end
 end
