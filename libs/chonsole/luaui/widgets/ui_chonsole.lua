@@ -33,7 +33,9 @@ end
 local Chili, screen0
 local ebConsole
 local lblContext
-local spSuggestions, scrollSuggestions 
+local spSuggestions, scrollSuggestions
+
+local vsx, vsy
 
 -- history
 local historyFilePath = ".console_history"
@@ -146,7 +148,7 @@ function widget:Initialize()
 	screen0 = Chili.Screen0
 	i18n = WG.i18n
 	if not i18n then
-		-- add optional support for i18n
+		-- optional support for i18n
 		i18n = function(key, data)
 			data = data or {}
 			return data.default or key
@@ -180,6 +182,7 @@ function widget:Initialize()
 			end
 		end
 		-- Load extension
+		commands = nil
 		local success, err = pcall(function() VFS.Include(f, nil, VFS.DEF_MODE) end)
 		if not success then
 			Spring.Log("Chonsole", LOG.ERROR, "Error loading extension file: " .. f)
@@ -272,9 +275,25 @@ function widget:Initialize()
 	ResizeUI(vsx, vsy)
 end
 
-function ResizeUI(vsx, vsy)
+function AreSuggestionsInverted()
+	if config.suggestions.inverted then
+		return true
+	end
+	local _, vsy = Spring.GetViewGeometry()
+	local y = config.console.y * vsy + ebConsole.height
+	local h = config.suggestions.h * vsy
+	return y + h > vsy and y - h >= 0
+end
+
+function ResizeUI(_vsx, _vsy)
+	vsx, vsy = _vsx, _vsy
 	ebConsole:SetPos(config.console.x * vsx, config.console.y * vsy, config.console.w * vsx)
-	scrollSuggestions:SetPos(config.console.x * vsx, config.console.y * vsy + ebConsole.height, config.console.w * vsx, config.suggestions.h * vsy)
+	if not AreSuggestionsInverted() then
+		scrollSuggestions:SetPos(config.console.x * vsx, config.console.y * vsy + ebConsole.height, config.console.w * vsx, config.suggestions.h * vsy)
+	else
+		local sh = config.suggestions.h * vsy
+		scrollSuggestions:SetPos(config.console.x * vsx, config.console.y * vsy - sh, config.console.w * vsx, sh)
+	end
 	spSuggestions:SetPos(nil, nil, config.console.w * vsx, config.suggestions.h * vsy)
 	lblContext:SetPos(config.console.x * vsx - lblContext.width - 6, config.console.y * vsy + 7)
 end
@@ -324,7 +343,7 @@ end
 
 function SuggestionsDown()
 	if #filteredSuggestions == 1 and #dynamicSuggestions ~= 0 then
-		if #dynamicSuggestions > currentSubSuggestion then
+		if #dynamicSuggestions > currentSubSuggestion and dynamicSuggestions[currentSubSuggestion+1].suggestion.visible then
 			currentSubSuggestion = currentSubSuggestion + 1
 			local suggestion = dynamicSuggestions[currentSubSuggestion].suggestion
 			ebConsole:SetText(suggestion.command)
@@ -366,7 +385,7 @@ function ParseKey(ebConsole, key, mods, ...)
 			currentHistory = currentHistory - 1
 			ShowHistoryItem()
 			ShowSuggestions()
-		elseif #filteredSuggestions > currentSuggestion or #dynamicSuggestions > currentSubSuggestion then
+		elseif #filteredSuggestions > currentSuggestion or (#dynamicSuggestions > currentSubSuggestion and dynamicSuggestions[currentSubSuggestion+1].suggestion.visible) then
 			SuggestionsDown()
 		end
 	elseif key == Spring.GetKeyCode("tab") then
@@ -379,7 +398,7 @@ function ParseKey(ebConsole, key, mods, ...)
 		else
 			nextSuggestion = 1
 		end
-		if #dynamicSuggestions > currentSubSuggestion then
+		if #dynamicSuggestions > currentSubSuggestion and dynamicSuggestions[currentSubSuggestion+1].suggestion.visible then
 			nextSubSuggestion = currentSubSuggestion + 1
 		else
 			nextSubSuggestion = 1
@@ -410,13 +429,13 @@ function ParseKey(ebConsole, key, mods, ...)
 		end
 	elseif key == Spring.GetKeyCode("pageup") then
 		for i = 1, config.suggestions.pageUpFactor do
-			if currentSuggestion > 0 then
+			if currentSuggestion > 0 or currentSubSuggestion > 0 then
 				SuggestionsUp()
 			end
 		end
 	elseif key == Spring.GetKeyCode("pagedown") then
 		for i = 1, config.suggestions.pageDownFactor do
-			if #filteredSuggestions > currentSuggestion then
+			if #filteredSuggestions > currentSuggestion or (#dynamicSuggestions > currentSubSuggestion and dynamicSuggestions[currentSubSuggestion+1].suggestion.visible) then
 				SuggestionsDown()
 			end
 		end
@@ -433,6 +452,16 @@ function FilterHistory(txt)
 		if historyItem:starts(txt) then
 			table.insert(filteredHistory, historyItem)
 		end
+	end
+end
+
+function UpdateTexture()
+	texName = nil
+	local txt = ebConsole.text
+	if txt:sub(1, #"/texture ") == "/texture " then
+		local cmdParts = explode(" ", txt:sub(#"/texture"+1):trimLeft():gsub("%s+", " "))
+		local partialCmd = cmdParts[1]:lower()
+		texName = partialCmd
 	end
 end
 
@@ -478,6 +507,7 @@ function PostParseKey(...)
 			HideSuggestions()
 		end
 	end
+	UpdateTexture()
 	ShowContext()
 end
 
@@ -593,20 +623,6 @@ function GenerateSuggestions()
 		suggestion.id = i
 		suggestionNameMapping[suggestion.command:lower()] = i
 	end
--- 	if txt:lower():starts("/gamerules") then
--- 		local txt = txt:sub(#"/gamerules"+1):trim()
--- 		txt = explode(" ", txt)[1]
--- 		for index, rule in pairs(Spring.GetGameRulesParams()) do
--- 			if type(rule) == "table" then
--- 				for name, value in pairs(rule) do
--- 					if txt == nil or txt == "" or name:starts(txt) then
--- 						table.insert(suggestions, { command = "/gamerules " .. name, text = name, description = value })
--- 					end
--- 				end
--- 			end
--- 		end
--- 	else
--- 		
 	spSuggestions.ctrls = {}
 	for _, suggestion in pairs(suggestions) do
 		local ctrlSuggestion = CreateSuggestion(suggestion)
@@ -679,29 +695,30 @@ function FilterSuggestions(txt)
 		if count == 1 then
 			local suggestion = suggestions[filteredSuggestions[1]]
 			if suggestion.suggestions ~= nil then
-				local suggestions
+				local subSuggestions
 				local success, err = pcall(function() 
-					suggestions = suggestion.suggestions(txt, cmdParts)
+					subSuggestions = suggestion.suggestions(txt, cmdParts)
 				end)
 				if not success then
 					Spring.Log("Chonsole", LOG.ERROR, "Error obtaining suggestions for command: " .. tostring(suggestion.command))
 					Spring.Log("Chonsole", LOG.ERROR, err)
 					return
 				end
-				for i, suggestion in pairs(suggestions) do
-					if suggestion.visible == nil then
-						suggestion.visible = true
+				for i, subSuggestion in pairs(subSuggestions) do
+					if subSuggestion.visible == nil then
+						subSuggestion.visible = true
 					end
-					suggestion.dynId = #dynamicSuggestions + 1
+					subSuggestion.dynId = #dynamicSuggestions + 1
 					if i > #dynamicSuggestions then
-						local ctrlSuggestion = CreateSuggestion(suggestion)
-						ctrlSuggestion.suggestion = suggestion
+						local ctrlSuggestion = CreateSuggestion(subSuggestion)
+						ctrlSuggestion.suggestion = subSuggestion
 						table.insert(dynamicSuggestions, ctrlSuggestion)
 						spSuggestions:AddChild(ctrlSuggestion)
 					else
 						local ctrlSuggestion = dynamicSuggestions[i]
 						ctrlSuggestion.suggestion.visible = true
-						PopulateSuggestion(ctrlSuggestion, suggestion)
+						ctrlSuggestion.suggestion = subSuggestion
+						PopulateSuggestion(ctrlSuggestion, subSuggestion)
 					end
 				end
 			end
@@ -721,11 +738,11 @@ end
 function UpdateSuggestionDisplay(suggestion, ctrlSuggestion, row)
 	if suggestion.visible then
 		ctrlSuggestion.y = (row - 1) * (config.suggestions.fontSize + config.suggestions.padding)
-		
+
 		if not ctrlSuggestion.visible then
 			ctrlSuggestion:Show()
 		end
-		
+
 		if currentSubSuggestion == 0 and suggestion.id ~= nil and suggestion.id == filteredSuggestions[currentSuggestion] then
 			ctrlSuggestion.backgroundColor = config.suggestions.suggestionColor
 		elseif suggestion.dynId ~= nil and suggestion.dynId == currentSubSuggestion then
@@ -735,7 +752,7 @@ function UpdateSuggestionDisplay(suggestion, ctrlSuggestion, row)
 		else
 			ctrlSuggestion.backgroundColor = { 0, 0, 0, 0 }
 		end
-		
+
 		if suggestion.cheat then
 			local cheatColor
 			if Spring.IsCheatingEnabled() then
@@ -748,31 +765,32 @@ function UpdateSuggestionDisplay(suggestion, ctrlSuggestion, row)
 			ctrlSuggestion.lblCheat.font.color = cheatColor
 			ctrlSuggestion.lblCheat:Invalidate()
 		end
-		
+
 		ctrlSuggestion:Invalidate()
 	elseif ctrlSuggestion.visible then
 		ctrlSuggestion:Hide()
-	end	
+	end
 end
 
 function UpdateSuggestions()
+	UpdateTexture()
 	local count = 0
 	for _, suggestion in pairs(suggestions) do
 		local ctrlSuggestion = spSuggestions.ctrls[suggestion.id]
 		if suggestion.visible then
 			count = count + 1
 		end
-		UpdateSuggestionDisplay(suggestion, ctrlSuggestion, count)	
+		UpdateSuggestionDisplay(suggestion, ctrlSuggestion, count)
 	end
 	for _, dynamicSuggestion in pairs(dynamicSuggestions) do
 		count = count + 1
 		dynamicSuggestion.x = 50
 		UpdateSuggestionDisplay(dynamicSuggestion.suggestion, dynamicSuggestion, count)
 	end
-	
+
 	-- FIXME: magic numbers and fake controls ^_^
 	spSuggestions.fakeCtrl.y = (count-1+1) * (config.suggestions.fontSize + config.suggestions.padding)
-	
+
 	if currentSuggestion ~= 0 and scrollSuggestions.visible then
 		local suggestion = suggestions[filteredSuggestions[currentSuggestion]]
 		local selY = spSuggestions.ctrls[suggestion.id].y
@@ -784,7 +802,7 @@ function UpdateSuggestions()
 	elseif count == 0 and scrollSuggestions.visible then
 		scrollSuggestions:Hide()
 	end
-	
+
 	spSuggestions:Invalidate()
 end
 
@@ -825,46 +843,42 @@ function ProcessText(str)
 	if str:sub(1, 1) == '/' then
 		local command = str:sub(2):trimLeft()
 		local cmdParts = explode(" ", command:gsub("%s+", " "))
-		if #cmdParts == 2 and cmdParts[1]:lower() == "luaui" and cmdParts[2]:lower() == "reload" then
-			Spring.SendLuaRulesMsg('luaui_reload')
-		else
-			for _, cmd in pairs(cmdConfig) do
-				if cmd.command == cmdParts[1]:lower() and cmd.exec ~= nil then
-					if not cmd.cheat or Spring.IsCheatingEnabled() then
-						ExecuteCustomCommand(cmd, command, cmdParts)
-					elseif autoCheat then
-						Spring.SendCommands("cheat 1")
-						table.insert(autoCheatBuffer, {cmd, command, cmdParts})
-					else
-						Spring.Echo("Enable cheats with /cheat or /autocheat")
-						-- NOTICE: Custom commands won't even be attempted if they're supposed to fail
-						-- In case a user tries to manually send such attempts, it will still be stopped in the gadget.
-						-- ExecuteCustomCommand(cmd, command, cmdParts)
-					end
-					return
-				end
-			end
-			
-			local index = suggestionNameMapping[cmdParts[1]]
-			Spring.Echo(command)
-			if index then
-				local suggestion = suggestions[index]
-				if (suggestion.cheat or cmdParts[1]:lower() == "luarules" and cmdParts[2]:lower() == "reload") and not Spring.IsCheatingEnabled() then
-					if autoCheat then
-						Spring.SendCommands("cheat 1")
-						table.insert(autoCheatBuffer, command)
-					else
-						Spring.Echo("Enable cheats with /cheat or /autocheat")
-						-- NOTICE: It will still try to execute the engine command which should fail.
-						Spring.SendCommands(command)
-					end
+		for _, cmd in pairs(cmdConfig) do
+			if cmd.command == cmdParts[1]:lower() and cmd.exec ~= nil then
+				if not cmd.cheat or Spring.IsCheatingEnabled() then
+					ExecuteCustomCommand(cmd, command, cmdParts)
+				elseif autoCheat then
+					Spring.SendCommands("cheat 1")
+					table.insert(autoCheatBuffer, {cmd, command, cmdParts})
 				else
+					Spring.Echo("Enable cheats with /cheat or /autocheat")
+					-- NOTICE: Custom commands won't even be attempted if they're supposed to fail
+					-- In case a user tries to manually send such attempts, it will still be stopped in the gadget.
+					-- ExecuteCustomCommand(cmd, command, cmdParts)
+				end
+				return
+			end
+		end
+		
+		local index = suggestionNameMapping[cmdParts[1]]
+		Spring.Echo(command)
+		if index then
+			local suggestion = suggestions[index]
+			if (suggestion.cheat or cmdParts[1]:lower() == "luarules" and cmdParts[2]:lower() == "reload") and not Spring.IsCheatingEnabled() then
+				if autoCheat then
+					Spring.SendCommands("cheat 1")
+					table.insert(autoCheatBuffer, command)
+				else
+					Spring.Echo("Enable cheats with /cheat or /autocheat")
+					-- NOTICE: It will still try to execute the engine command which should fail.
 					Spring.SendCommands(command)
 				end
 			else
-				Spring.Log("Chonsole", LOG.WARNING, "Unknown command: " .. command)
 				Spring.SendCommands(command)
 			end
+		else
+			Spring.Log("Chonsole", LOG.WARNING, "Unknown command: " .. command)
+			Spring.SendCommands(command)
 		end
 	else
 		local command
@@ -905,6 +919,26 @@ function widget:DrawWorld()
 	if delayGL then
 		delayGL()
 		delayGL = nil
+	end
+end
+
+-- TODO: Make this part of the gl.lua extension, i.e. un-hardcode
+function widget:DrawScreen()
+	if texName then
+		gl.PushMatrix()
+			local texInfo = gl.TextureInfo(texName)
+			if texInfo and texInfo.xsize >= 0 then
+				gl.Texture(texName)
+				-- FIXME: y is inverted in OpenGL (with respect to Chili)
+				-- TODO: Fix magic numbers (make them configurable)
+				gl.TexRect(ebConsole.x-400, ebConsole.y, ebConsole.x, ebConsole.y + 400)
+				local sizeStr = tostring(texInfo.xsize) .. "x" .. tostring(texInfo.ysize)
+				if texInfo.xsize == 0 then
+					gl.Color(1, 0, 0)
+				end
+				gl.Text(sizeStr, ebConsole.x - 240, ebConsole.y - 15, 16)
+			end
+		gl.PopMatrix()
 	end
 end
 
