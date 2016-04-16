@@ -54,16 +54,15 @@ local function SetGameMode(gameMode)
     if gameMode == "play" then
         Spring.SendCommands("unbindall") --muahahahaha
         Spring.SendCommands("unbindkeyset enter chat") --because because.
-        SetBindings()
     else
         Spring.SendCommands("bindkeyset enter chat")
     end
+    SetBindings()
 end
 
 function widget:Initialize()
     gameMode = Spring.GetGameRulesParam("gameMode")
     SetGameMode(gameMode)
-    SetBindings()
 
     bindText = { -- keybinds told to player
         --purple .. "Q : " .. white .. "swap pull / push",
