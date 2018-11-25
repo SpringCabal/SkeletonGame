@@ -5,7 +5,7 @@ local modinfo = {
 	shortgame = "SKEL",
     version = "Git",
 	description = "Skeleton game",
-	
+
 	modtype = "1",
 	depend = {
 		"cursors.sdz",

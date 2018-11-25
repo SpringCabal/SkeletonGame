@@ -30,17 +30,17 @@ function addon.DrawLoadScreen()
 	local vsx, vsy = gl.GetViewSizes()
 
 
-	
+
 	-- draw progressbar
 	local hbw = 3.5/vsx
 	local vbw = 3.5/vsy
 	local hsw = 0.2
 	local vsw = 0.2
-	
+
 	gl.PushMatrix()
 	gl.Scale(.4,.4,1)
 	gl.Translate(-0.1,0,0)
-	
+
 	gl.BeginEnd(GL.QUADS, function()
 		--shadow topleft
 		gl.Color(0,0,0,0)
@@ -176,7 +176,7 @@ function addon.DrawLoadScreen()
 			font:Print("Loading...", vsx * 0.5, vsy * 0.165, barTextSize, "oc")
 		end
 	gl.PopMatrix()
-	
+
 	gl.PopMatrix()
 end
 

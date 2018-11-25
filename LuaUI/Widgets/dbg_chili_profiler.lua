@@ -47,22 +47,22 @@ local function trace(event, line)
 		label0:SetCaption("Samples: " .. samples)
 		s = 0
 	end
-	
+
 	local j = 2
 	local i = 666
 	local top = true
 
 	local alreadySampled = {}
-	
+
 	while (i) do
-		repeat 
+		repeat
 			i = debug.getinfo(j, "nS")
 			j = j + 1
 			if (not i) then return end
-		until not((not i.name) or i.what == "C" or i.what == "main" or i.source:find("\n") or i.source:find("(tail call)")) 
+		until not((not i.name) or i.what == "C" or i.what == "main" or i.source:find("\n") or i.source:find("(tail call)"))
 
-		local s = i.source or "???"
-		local n = i.name or "???"
+		local s = i.source or "???" -- luacheck:ignore
+		local n = i.name or "???"   -- luacheck:ignore
 		local l = i.linedefined or "???"
 		n = ("%s (line: %s)"):format(n, l)
 
@@ -83,7 +83,7 @@ end
 
 local function rendertree()
 	tree0.root:ClearChildren()
-	for s,t in pairs(sample_tree) do
+	for s,t in pairs(sample_tree) do -- luacheck:ignore
 		local node_file
 		for f,c in pairs(t) do
 			if (c[1]/samples > min_usage)or(c[2]/samples > min_usage) then

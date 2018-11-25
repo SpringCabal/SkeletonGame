@@ -15,7 +15,7 @@ end
 ------------------------------------------
 
 local loadscreens = VFS.DirList("bitmaps/loadpictures/")
-local screenNum = math.random(#loadscreens) 
+local screenNum = math.random(#loadscreens)
 --local backgroundTexture = loadscreens[screenNum]
 local backgroundTexture = loadscreens[1+(math.floor((1000*os.clock())%#loadscreens))] -- hacky hotfix for http://springrts.com/mantis/view.php?id=4572
 local aspectRatio
@@ -39,8 +39,7 @@ function addon.DrawLoadScreen()
 
 	if (ratioComp > 1) then
 		xDiv = (1 - (1 / ratioComp)) * 0.5;
-	elseif (math.abs(ratioComp - 1) < 0) then
-	else
+	elseif not (math.abs(ratioComp - 1) < 0) then
 		yDiv = (1 - ratioComp) * 0.5;
 	end
 

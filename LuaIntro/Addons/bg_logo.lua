@@ -222,22 +222,22 @@ function CreateSuperEllipse(power1,power2,n)
 	end
 end
 
-function blend(x1,x2,a)
-	return a * x2 + (1 - a) * x1
+function blend(x1, x2, a_)
+	return a_ * x2 + (1 - a_) * x1
 end
 
 
 function GetSunVertex(r,theta)
-	local a = math.pi / 10
+	local av = math.pi / 10
 
-	local theta1 = math.floor(theta / a) * a
-	local theta2 = theta1 + a
+	local theta1 = math.floor(theta / av) * av
+	local theta2 = theta1 + av
 
 	local s = (theta - theta1) / (theta2 - theta1)
-	--local s = (theta % a) / a
+	--local s = (theta % av) / av
 	s = math.min(1, math.max(0, s))
 
-	local u = math.floor(theta / a) % 2
+	local u = math.floor(theta / av) % 2
 	local r1 = (u >= 1.0) and 1 or 0
 	local r2 = (u <= 0.5) and 1 or 0
 
@@ -331,8 +331,7 @@ function DrawLogo()
 	cube_dl = gl.CreateList(function()
 		gl.PushMatrix()
 		gl.SecondaryColor(0, 0, 0) --// shiness
-		local b = 1.0
-		gl.Color(b*18/255, b*30/255, b*80/255, 1)
+		gl.Color(18 / 255, 30 / 255, 80 / 255, 1)
 		CreateSuperEllipse(0.16, 0.16, 50)
 
 		gl.Translate(0, 0.17, 0)

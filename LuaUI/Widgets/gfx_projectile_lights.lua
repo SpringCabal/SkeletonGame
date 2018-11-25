@@ -22,8 +22,8 @@ local spGetVisibleProjectiles     = Spring.GetVisibleProjectiles
 local spGetProjectilePosition     = Spring.GetProjectilePosition
 local spGetProjectileType         = Spring.GetProjectileType
 local spGetProjectileDefID        = Spring.GetProjectileDefID
-local spGetPieceProjectileParams  = Spring.GetPieceProjectileParams 
-local spGetProjectileVelocity     = Spring.GetProjectileVelocity 
+local spGetPieceProjectileParams  = Spring.GetPieceProjectileParams
+local spGetProjectileVelocity     = Spring.GetProjectileVelocity
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -60,11 +60,11 @@ local function LoadParams(param)
 		param.g / options.light_brightness.value,
 		param.b / options.light_brightness.value,
 	}
-	
+
 	radiusOverride = options.light_radius.value
 	colorBrightness = options.light_brightness.value
 	colorOverride = options.light_color.value
-	
+
 	Spring.Echo("Loading Settings")
 	ApplySetting()
 	wantLoadParams = false
@@ -78,7 +78,7 @@ options = {
 		name = "Enable Projectile Lights",
 		type = 'bool',
 		value = true,
-		OnChange = function (self) 
+		OnChange = function (self)
 			lightsEnabled = self.value
 		end,
 	},
@@ -87,7 +87,7 @@ options = {
 		desc = "Override lights with the following parameters.",
 		type = 'bool',
 		value = false,
-		OnChange = function (self) 
+		OnChange = function (self)
 			doOverride = self.value
 		end,
 		advanced = true
@@ -108,7 +108,7 @@ options = {
 		type = 'number',
 		value = 3,
 		min = 0.05, max = 5, step = 0.05,
-		OnChange = function (self) 
+		OnChange = function (self)
 			colorBrightness = self.value
 			ApplySetting()
 		end,
@@ -175,16 +175,16 @@ local function GetLightsFromUnitDefs()
 			--AircraftBomb
 			--Shield
 			--TorpedoLauncher
-		
+
 		local weaponDef = WeaponDefs[weaponDefID]
 		local customParams = weaponDef.customParams or {}
-		
+
 		local r = weaponDef.visuals.colorR + 0.2
 		local g = weaponDef.visuals.colorG + 0.2
 		local b = weaponDef.visuals.colorB + 0.2
-		
+
 		local weaponData = {r = r, g = g, b = b, radius = 100}
-		
+
 		if (weaponDef.type == 'Cannon') then
 			if customParams.single_hit then
 				weaponData.beamOffset = 1
@@ -213,39 +213,39 @@ local function GetLightsFromUnitDefs()
 				weaponData.fadeTime = weaponDef.beamTTL
 			end
 		end
-		
+
 		if customParams.light_fade_time and customParams.light_fade_offset then
 			weaponData.fadeTime = tonumber(customParams.light_fade_time)
 			weaponData.fadeOffset = tonumber(customParams.light_fade_offset)
 		end
-		
+
 		if customParams.light_radius then
 			weaponData.radius = tonumber(customParams.light_radius)
 		end
-		
+
 		if customParams.light_ground_height then
 			weaponData.groundHeightLimit = tonumber(customParams.light_ground_height)
 		end
-		
+
 		if customParams.light_camera_height then
 			weaponData.cameraHeightLimit = tonumber(customParams.light_camera_height)
 		end
-		
+
 		if customParams.light_beam_start then
 			weaponData.beamStartOffset = tonumber(customParams.light_beam_start)
 		end
-		
+
 		if customParams.light_beam_offset then
 			weaponData.beamOffset = tonumber(customParams.light_beam_offset)
 		end
-		
+
 		if customParams.light_color then
 			local colorList = Split(customParams.light_color, " ")
 			weaponData.r = colorList[1]
 			weaponData.g = colorList[2]
 			weaponData.b = colorList[3]
 		end
-		
+
 		if weaponData.radius > 0 and not customParams.fake_weapon then
 			plighttable[weaponDefID] = weaponData
 		end
@@ -275,11 +275,11 @@ local function ProjectileLevelOfDetailCheck(param, proID, fps, height)
 			return false
 		end
 	end
-	
+
 	if param.beam then
 		return true
 	end
-	
+
 	if fps < 60 then
 		local fraction = fps/60
 		local ratio = 1/fraction
@@ -298,11 +298,11 @@ local function GetProjectileLights(beamLights, beamLightCount, pointLights, poin
 	if #projectiles == 0 then
 		return beamLights, beamLightCount, pointLights, pointLightCount
 	end
-	
+
 	local fps = Spring.GetFPS()
 	local cameraHeight = math.floor(GetCameraHeight()*0.01)*100
 	--Spring.Echo("cameraHeight", cameraHeight, "fps", fps)
-	
+
 
 	local no_duplicate_projectileIDs_hackyfix = {}
 	for i, pID in ipairs(projectiles) do
@@ -334,7 +334,7 @@ local function GetProjectileLights(beamLights, beamLightCount, pointLights, poin
 						if lightParams.beamStartOffset then
 							local m = lightParams.beamStartOffset
 							x, y, z = x + deltax*m, y + deltay*m, z + deltaz*m
-							deltax, deltay, deltaz = deltax*(1 - m), deltay*(1 - m), deltaz*(1 - m) 
+							deltax, deltay, deltaz = deltax*(1 - m), deltay*(1 - m), deltaz*(1 - m)
 						end
 						beamLightCount = beamLightCount + 1
 						beamLights[beamLightCount] = {px = x, py = y, pz = z, dx = deltax, dy = deltay, dz = deltaz, param = (doOverride and overrideParam) or lightParams}
@@ -362,7 +362,7 @@ local function GetProjectileLights(beamLights, beamLightCount, pointLights, poin
 				end
 			end
 		end
-	end 
+	end
 
 	return beamLights, beamLightCount, pointLights, pointLightCount
 end

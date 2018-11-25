@@ -172,7 +172,7 @@ valkShieldSphere = {
 commandShieldSphere = {
   life			= math.huge,
   heightFactor	= 0.75,
-  radiusFactor	= 1.75, 
+  radiusFactor	= 1.75,
   repeatEffect	= true
 }
 

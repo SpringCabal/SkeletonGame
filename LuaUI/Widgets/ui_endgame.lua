@@ -49,8 +49,8 @@ end
 local function SetupControls()
 	local winSizeX, winSizeY = Spring.GetWindowGeometry()
 	local width, height = 400, 400
-	
-	window_endgame = Window:New{  
+
+	window_endgame = Window:New {
 		name = "GameOver",
 		--caption = "Game Over",
 		x = (winSizeX - width)/2,
@@ -63,49 +63,49 @@ local function SetupControls()
 		draggable = false,
 		resizable = false,
 	}
-	
-    local score = Spring.GetGameRulesParam("score") or 0 
-    local survialTime = Spring.GetGameRulesParam("survivalTime") or 0 
-    local rabbitKills = Spring.GetGameRulesParam("rabbits_killed") or 0 
-    
+
+    local score = Spring.GetGameRulesParam("score") or 0
+    local survialTime = Spring.GetGameRulesParam("survivalTime") or 0
+    local rabbitKills = Spring.GetGameRulesParam("rabbits_killed") or 0
+
 	Chili.Label:New{
- 		x = 60,
- 		y = 30,
- 		width = 100,
- 		parent = window_endgame,
- 		caption = "Game Over",
- 		fontsize = 50,
- 		textColor = {1,0,0,1},
- 	}
-	
+		x = 60,
+		y = 30,
+		width = 100,
+		parent = window_endgame,
+		caption = "Game Over",
+		fontsize = 50,
+		textColor = {1,0,0,1},
+	}
+
     Chili.Label:New{
- 		x = 80,
- 		y = 100,
- 		width = 100,
- 		parent = window_endgame,
- 		caption = "Score: " .. score,
- 		fontsize = 40,
- 		textColor = {1,0,0,1},
- 	}
+		x = 80,
+		y = 100,
+		width = 100,
+		parent = window_endgame,
+		caption = "Score: " .. score,
+		fontsize = 40,
+		textColor = {1,0,0,1},
+	}
 	Chili.Label:New{
- 		x = 114,
- 		y = 155,
- 		width = 100,
- 		parent = window_endgame,
- 		caption = "Time: " .. survialTime .. "s",
- 		fontsize = 32,
- 		textColor = {1,0,0,1},
- 	}
+		x = 114,
+		y = 155,
+		width = 100,
+		parent = window_endgame,
+		caption = "Time: " .. survialTime .. "s",
+		fontsize = 32,
+		textColor = {1,0,0,1},
+	}
 	Chili.Label:New{
- 		x = 128,
- 		y = 200,
- 		width = 100,
- 		parent = window_endgame,
- 		caption = rabbitKills .. " 🐰",
- 		fontsize = 32,
- 		textColor = {1,0,0,1},
- 	}
-	
+		x = 128,
+		y = 200,
+		width = 100,
+		parent = window_endgame,
+		caption = rabbitKills .. " 🐰",
+		fontsize = 32,
+		textColor = {1,0,0,1},
+	}
+
 	nameBox = Chili.EditBox:New{
 		parent = window_endgame,
 		x = 50,
@@ -133,7 +133,7 @@ local function SetupControls()
 			if playerName == "" then
 				return
 			end
-			
+
 			nameBox:Dispose()
 			nameBox = nil
 			lblUpload = Chili.Label:New {
@@ -145,7 +145,7 @@ local function SetupControls()
 				caption = "Uploading...",
 				fontsize = 26,
 			}
-			
+
 			if WG.analytics and WG.analytics.SendEvent then
 				-- sending it with a fake timestamp so it belongs to the previous game
 				WG.analytics:SendEvent("player_name", playerName, gameOverTime)
@@ -162,7 +162,7 @@ local function SetupControls()
 		x       = 150;
 		height  = 55;
 		caption = "Restart",
- 		fontsize = 20,
+		fontsize = 20,
 		OnClick = {
 			function()
 				nameBox = nil
@@ -182,17 +182,17 @@ local function SetupControls()
 		x       = 260;
 		height  = 55;
 		caption = "Exit",
- 		fontsize = 20,
+		fontsize = 20,
 		OnClick = {
-			function() 
+			function()
 				nameBox = nil
 				restartButton = nil
-				Spring.SendCommands("quit","quitforce") 
+				Spring.SendCommands("quit","quitforce")
 			end
 		};
 		parent = window_endgame;
 	}
-    
+
 	screen0:AddChild(window_endgame)
 
 end
@@ -257,10 +257,10 @@ function widget:GameOver(winningAllyTeams)
         gameOverTime = os.clock()
 		local score = Spring.GetGameRulesParam("score") or 0
 		local survivalTime = Spring.GetGameRulesParam("survivalTime") or 0
-		local rabbitKills = Spring.GetGameRulesParam("rabbits_killed") or 0 
+		local rabbitKills = Spring.GetGameRulesParam("rabbits_killed") or 0
 		local shotsFired = Spring.GetGameRulesParam("shots_fired") or 0
 		local minesPlaced = Spring.GetGameRulesParam("mines_placed") or 0
-		
+
 		WG.analytics:SendEvent("score", score)
 		WG.analytics:SendEvent("time", survivalTime)
 		WG.analytics:SendEvent("kills", rabbitKills)

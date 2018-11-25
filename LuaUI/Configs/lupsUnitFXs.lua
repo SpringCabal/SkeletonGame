@@ -20,35 +20,35 @@ local presets = {
 		{class='StaticParticles', options=commandCoronaBlue},
 		{class='GroundFlash', options=MergeTable(groundFlashBlue, {radiusFactor=3.5,mobile=true,life=math.huge,
 			colormap={ {0.2, 0.2, 1, 1},{0.2, 0.2, 1, 0.85},{0.2, 0.2, 1, 1} }})},
-	},	
+	},
 	commandAuraViolet = {
 		{class='StaticParticles', options=commandCoronaViolet},
 		{class='GroundFlash', options=MergeTable(groundFlashViolet, {radiusFactor=3.5,mobile=true,life=math.huge,
 			colormap={ {0.8, 0, 0.8, 1},{0.8, 0, 0.8, 0.85},{0.8, 0, 0.8, 1} }})},
-	},	
-	
+	},
+
 	commAreaShield = {
 		{class='ShieldJitter', options={delay=0, life=math.huge, heightFactor = 0.75, size=350, strength = .001, precision=50, repeatEffect=true, quality=4}},
 	},
-	
+
 	commandShieldRed = {
 		{class='ShieldSphere', options=MergeTable({colormap1 = {{1, 0.1, 0.1, 0.6}}, colormap2 = {{1, 0.1, 0.1, 0.15}}}, commandShieldSphere)},
 --		{class='StaticParticles', options=commandCoronaRed},
 --		{class='GroundFlash', options=MergeTable(groundFlashRed, {radiusFactor=3.5,mobile=true,life=60,
---			colormap={ {1, 0.2, 0.2, 1},{1, 0.2, 0.2, 0.85},{1, 0.2, 0.2, 1} }})},	
+--			colormap={ {1, 0.2, 0.2, 1},{1, 0.2, 0.2, 0.85},{1, 0.2, 0.2, 1} }})},
 	},
 	commandShieldOrange = {
 		{class='ShieldSphere', options=MergeTable({colormap1 = {{0.8, 0.3, 0.1, 0.6}}, colormap2 = {{0.8, 0.3, 0.1, 0.15}}}, commandShieldSphere)},
-	},	
+	},
 	commandShieldGreen = {
 		{class='ShieldSphere', options=MergeTable({colormap1 = {{0.1, 1, 0.1, 0.6}}, colormap2 = {{0.1, 1, 0.1, 0.15}}}, commandShieldSphere)},
 	},
 	commandShieldBlue= {
 		{class='ShieldSphere', options=MergeTable({colormap1 = {{0.1, 0.1, 0.8, 0.6}}, colormap2 = {{0.1, 0.1, 1, 0.15}}}, commandShieldSphere)},
-	},	
+	},
 	commandShieldViolet = {
 		{class='ShieldSphere', options=MergeTable({colormap1 = {{0.6, 0.1, 0.75, 0.6}}, colormap2 = {{0.6, 0.1, 0.75, 0.15}}}, commandShieldSphere)},
-	},	
+	},
 }
 
 effectUnitDefs = {
@@ -99,7 +99,7 @@ effectUnitDefs = {
 	{class='Bursts', options=MergeTable({piece="rpilot"},corjamtBursts)},
 	--{class='ShieldJitter', options={delay=0, life=math.huge, pos={0,15,0}, size=100, strength = .001, precision=50, repeatEffect=true, quality = 5}},
   },
-  
+
   funnelweb = {
 	{class='ShieldJitter', options={delay=0, life=math.huge, pos={0,25,-10}, size=400, strength = .002, precision=50, repeatEffect=true, quality = 4}},
 	{class='Bursts', options=MergeTable(corjamtBursts, {piece="emitl"})},
@@ -118,9 +118,9 @@ effectUnitDefs = {
 
   --// FACTORIES //----------------------------
   factoryship = {
-  	{class='StaticParticles', options=MergeTable(blinkyLightRed, {piece="flash01"}) },
+  {class='StaticParticles', options=MergeTable(blinkyLightRed, {piece="flash01"}) },
 	{class='StaticParticles', options=MergeTable(blinkyLightGreen, {piece="flash03", delay = 20,}) },
-	{class='StaticParticles', options=MergeTable(blinkyLightBlue, {piece="flash05", delay = 40,}) },	
+	{class='StaticParticles', options=MergeTable(blinkyLightBlue, {piece="flash05", delay = 40,}) },
   },
 
   --// PYLONS // ----------------------------------
@@ -134,16 +134,16 @@ effectUnitDefs = {
     {class='SimpleParticles', options=MergeTable({delay=60},roostDirt)},
     {class='SimpleParticles', options=MergeTable({delay=120},roostDirt)},
   },
-  
+
   armasp= {
-  	{class='StaticParticles', options=MergeTable(blinkyLightRed, {piece="light1"}) },
+  {class='StaticParticles', options=MergeTable(blinkyLightRed, {piece="light1"}) },
 	{class='StaticParticles', options=MergeTable(blinkyLightGreen, {piece="light2"}) },
   },
-  
+
   armarad = {
     {class='StaticParticles', options=MergeTable(blinkyLightWhite,{piece="point"})},
     --{class='StaticParticles', options=MergeTable(blinkyLightBlue,{piece="point", delay=15})},
-  },  
+  },
   corarad = {
     {class='StaticParticles', options=radarBlink},
     {class='StaticParticles', options=MergeTable(radarBlink,{pos={-1.6,25,0.0},delay=15})},
@@ -156,15 +156,15 @@ effectUnitDefs = {
 
   armcrabe = {
 	{class='StaticParticles', options=MergeTable(blinkyLightWhite, {piece="blight"}) },
-  },   
+  },
   corcan = {
 	--{class='StaticParticles', options=MergeTable(jackGlow, {piece="point"}) },
-  },  
-  
+  },
+
   spherepole = {
     {class='Ribbon', options={color={.3,.3,01,1}, width=5.5, piece="blade", onActive=false}},
   },
-  
+
   pw_warpgate = {
     {class='StaticParticles', options=warpgateCorona},
 --    {class='GroundFlash', options=groundFlashOrange},
@@ -172,7 +172,7 @@ effectUnitDefs = {
 
   zenith = {
     {class='StaticParticles', options=zenithCorona},
-  },    
+  },
 
   amphtele = {
 	{class='ShieldSphere', options=MergeTable(teleShieldSphere, {piece="sphere"})},
@@ -181,18 +181,18 @@ effectUnitDefs = {
 	{class='StaticParticles', options=MergeTable(teleCorona, {piece="sphere", onActive = true, size=100})},
 	{class='ShieldJitter', options={delay=0, life=math.huge, piece="sphere", size=50, strength = .005, precision=50, repeatEffect=true, onActive=true}},
   },
-	
+
   tele_beacon = {
 	{class='ShieldSphere', options=MergeTable(teleShieldSphere, {piece="sphere"})},
 	{class='StaticParticles', options=MergeTable(teleCorona, {piece="sphere"})},
 	{class='StaticParticles', options=MergeTable(teleCorona, {piece="sphere", onActive = true, size=50})},
-	{class='ShieldJitter', options={delay=0, life=math.huge, piece="sphere", size=30, strength = .005, precision=50, repeatEffect=true, onActive=true}},	
+	{class='ShieldJitter', options={delay=0, life=math.huge, piece="sphere", size=30, strength = .005, precision=50, repeatEffect=true, onActive=true}},
   },
-  
+
   armbanth = {
 	{class='StaticParticles', options=MergeTable(blinkyLightBlue, {piece="light", delay = 20, size = 25}) },
   },
-  
+
   armorco = {
 	{class='StaticParticles', options=MergeTable(blinkyLightGreen, {piece="light", delay = 20, size = 30}) },
   },
@@ -225,7 +225,7 @@ effectUnitDefs = {
     {class='Ribbon', options={width=1, size=6, piece="LWingTip"}},
     {class='Ribbon', options={width=1, size=6, piece="RWingTip"}},
 	--{class='StaticParticles', options=MergeTable(blinkyLightRed, {piece="LWingTip"}) },
-	--{class='StaticParticles', options=MergeTable(blinkyLightGreen, {piece="RWingTip"}) },	
+	--{class='StaticParticles', options=MergeTable(blinkyLightGreen, {piece="RWingTip"}) },
   },
   armcsa = {
     {class='AirJet', options={color={0.45,0.45,0.9}, width=2.8, length=15, piece="enginel", onActive=true}},
@@ -236,18 +236,18 @@ effectUnitDefs = {
 
   bladew = {
     {class='Ribbon', options={width=1, size=5, piece="ljet"}},
-    {class='Ribbon', options={width=1, size=5, piece="rjet"}},  
+    {class='Ribbon', options={width=1, size=5, piece="rjet"}},
     {class='AirJet', options={color={0.1,0.4,0.6}, width=3, length=14, piece="ljet", onActive=true, emitVector = {0, 1, 0}}},
     {class='AirJet', options={color={0.1,0.4,0.6}, width=3, length=14, piece="rjet", onActive=true, emitVector = {0, 1, 0}}},
   },
 
   armkam = {
     {class='Ribbon', options={width=1, size=10, piece="lfx"}},
-    {class='Ribbon', options={width=1, size=10, piece="rfx"}},  
+    {class='Ribbon', options={width=1, size=10, piece="rfx"}},
     {class='AirJet', options={color={0.1,0.4,0.6}, width=4, length=25, piece="lfx", onActive=true, emitVector = {0, 0, 1}}},
     {class='AirJet', options={color={0.1,0.4,0.6}, width=4, length=25, piece="rfx", onActive=true, emitVector = {0, 0, 1}}},
   },
-  gunshipaa = { 
+  gunshipaa = {
     {class='AirJet', options={color={0.1,0.4,0.6}, width=4, length=32, piece="ljet", onActive=true}},
     {class='AirJet', options={color={0.1,0.4,0.6}, width=4, length=32, piece="rjet", onActive=true}},
     {class='AirJet', options={color={0.1,0.4,0.6}, width=4, length=32, piece="mjet", onActive=true}},
@@ -256,7 +256,7 @@ effectUnitDefs = {
     {class='AirJet', options={color={0.1,0.4,0.6}, width=3.5, length=25, piece="exhaustl", onActive=true}},
     {class='AirJet', options={color={0.1,0.4,0.6}, width=3.5, length=25, piece="exhaustr", onActive=true}},
     {class='Ribbon', options={width=1, size=10, piece="wingtipl"}},
-    {class='Ribbon', options={width=1, size=10, piece="wingtipr"}},  
+    {class='Ribbon', options={width=1, size=10, piece="wingtipr"}},
   },
   bomberassault = {
     {class='AirJet', options={color={0.1,0.4,0.6}, width=5, length=40, piece="exhaustLeft", onActive=true}},
@@ -286,7 +286,7 @@ effectUnitDefs = {
     {class='Ribbon', options={width=1, piece="wingtipl"}},
     {class='Ribbon', options={width=1, piece="wingtipr"}},
 	{class='StaticParticles', options=MergeTable(blinkyLightRed, {piece="wingtipr"}) },
-	{class='StaticParticles', options=MergeTable(blinkyLightGreen, {piece="wingtipl"}) },	
+	{class='StaticParticles', options=MergeTable(blinkyLightGreen, {piece="wingtipl"}) },
   },
   corvamp = {
     {class='AirJet', options={color={0.6,0.1,0.0}, width=3.5, length=55, piece="thrust1", onActive=true}},
@@ -305,7 +305,7 @@ effectUnitDefs = {
     {class='StaticParticles', options=MergeTable(teleCorona, {piece="agrav3", onActive=true})},
     {class='ShieldSphere', options=MergeTable(teleShieldSphere, {piece="agrav4", onActive=true})},
     {class='StaticParticles', options=MergeTable(teleCorona, {piece="agrav4", onActive=true})},
-  }, 
+  },
   corvalk = {
     {class='AirJet', options={color={0.2,0.4,0.8}, width=3.5, length=22, piece="engineEmit", onActive=true}},
     {class='ShieldSphere', options=MergeTable(valkShieldSphere, {piece="agrav1", onActive=true})},
@@ -316,13 +316,13 @@ effectUnitDefs = {
     {class='StaticParticles', options=MergeTable(valkCorona, {piece="agrav3", onActive=true})},
     {class='ShieldSphere', options=MergeTable(valkShieldSphere, {piece="agrav4", onActive=true})},
     {class='StaticParticles', options=MergeTable(valkCorona, {piece="agrav4", onActive=true})},
-  },  
+  },
   corawac = {
     {class='AirJet', options={color={0.1,0.4,0.6}, width=3.5, length=25, piece="thrust", onActive=true}},
     {class='Ribbon', options={width=1, size=8, piece="wingtipl"}},
     {class='Ribbon', options={width=1, size=8, piece="wingtipr"}},
 	{class='StaticParticles', options=MergeTable(blinkyLightRed, {piece="wingtipr"}) },
-	{class='StaticParticles', options=MergeTable(blinkyLightGreen, {piece="wingtipl"}) },		
+	{class='StaticParticles', options=MergeTable(blinkyLightGreen, {piece="wingtipl"}) },
   },
   blackdawn = {
     {class='AirJet', options={color={0.8,0.1,0.0}, width=7, length=30, jitterWidthScale=2, distortion=0.01, piece="Lengine", texture2=":c:bitmaps/gpl/lups/jet2.bmp", onActive=true}},
@@ -350,7 +350,7 @@ local levelScale = {
 -- load presets from unitdefs
 for i=1,#UnitDefs do
 	local unitDef = UnitDefs[i]
-	
+
 	if unitDef.customParams and unitDef.customParams.commtype then
 		local s = levelScale[tonumber(unitDef.customParams.level) or 1]
 		if unitDef.customParams.commtype == "1" then
@@ -361,22 +361,22 @@ for i=1,#UnitDefs do
 			effectUnitDefsXmas[unitDef.name] = {
 				{class='SantaHat', options={pos={0,6*s,2*s}, emitVector={0.4,1,0.2}, width=2.7*s, height=6*s, ballSize=0.7*s, piece="head"}},
 			}
-		elseif unitDef.customParams.commtype == "3" then 
+		elseif unitDef.customParams.commtype == "3" then
 			effectUnitDefsXmas[unitDef.name] = {
 				{class='SantaHat', options={color={0,0.7,0,1}, pos={1.5*s,4*s,0.5*s}, emitVector={0.7,1.6,0.2}, width=2.2*s, height=6*s, ballSize=0.7*s, piece="head"}},
 			}
-		elseif unitDef.customParams.commtype == "4" then 
+		elseif unitDef.customParams.commtype == "4" then
 			effectUnitDefsXmas[unitDef.name] = {
 				{class='SantaHat', options={pos={0,3.8*s,0.35*s}, emitVector={0,1,0}, width=2.7*s, height=6*s, ballSize=0.7*s, piece="head"}},
 			}
-		elseif unitDef.customParams.commtype == "5" then 
+		elseif unitDef.customParams.commtype == "5" then
 			effectUnitDefsXmas[unitDef.name] = {
 				{class='SantaHat', options={color={0,0,0.7,1}, pos={0,0,0}, emitVector={0,1,0.1}, width=2.7*s, height=6*s, ballSize=0.7*s, piece="hat"}},
-			}	    
-		elseif unitDef.customParams.commtype == "6" then 
+			}
+		elseif unitDef.customParams.commtype == "6" then
 			effectUnitDefsXmas[unitDef.name] = {
 				{class='SantaHat', options={color={0,0,0.7,1}, pos={0,0,0}, emitVector={0,1,-0.1}, width=4.05*s, height=9*s, ballSize=1.05*s, piece="hat"}},
-			}	    
+			}
 		end
 	end
 	if unitDef.customParams then
@@ -385,10 +385,10 @@ for i=1,#UnitDefs do
 			local fxTableFunc = loadstring("return "..fxTableStr)
 			local fxTable = fxTableFunc()
 			effectUnitDefs[unitDef.name] = effectUnitDefs[unitDef.name] or {}
-			for i=1,#fxTable do	-- for each item in preset table
-				local toAdd = presets[fxTable[i]]
-				for i=1,#toAdd do
-					table.insert(effectUnitDefs[unitDef.name],toAdd[i])	-- append to unit's lupsFX table
+			for j=1,#fxTable do	-- for each item in preset table
+				local toAdd = presets[fxTable[j]]
+				for k=1,#toAdd do
+					table.insert(effectUnitDefs[unitDef.name],toAdd[k])	-- append to unit's lupsFX table
 				end
 			end
 		end

@@ -52,7 +52,7 @@ end
 -------------------------------------------------------------------------------------
 
 if (gadgetHandler:IsSyncedCode()) then
-   
+
 
 -- '/luarules circle'
 -- '/luarules give'
@@ -66,7 +66,7 @@ if (gadgetHandler:IsSyncedCode()) then
 -- UnitName TeamID Number Radius [Xpos Zpos]
 -- For example '/luarules circle corllt 1 60 420 3200 3200'
 local function circleGive(cmd, line, words, player)
-	if not (spIsCheatingEnabled() and #words >= 4) then 
+	if not (spIsCheatingEnabled() and #words >= 4) then
 		return
 	end
 	local unitName = words[1]
@@ -109,7 +109,7 @@ local function give(cmd,line,words,player)
 					--Spring.CreateUnit(subUdid, x2+32, y2, z2, 1, 0, false)
 					--Spring.CreateUnit(subUdid, x2, y2, z2-32, 2, 0, false)
 					--Spring.CreateUnit(subUdid, x2-32, y2, z2, 3, 0, false)
-				end	
+				end
 			end
 		end
 	end
@@ -144,7 +144,7 @@ end
 local function restart(cmd,line,words,player)
 	if spIsCheatingEnabled() then
 		local units = Spring.GetAllUnits()
-		
+
 		local teams = Spring.GetTeamList()
 		for i=1,#teams do
 			local teamID = teams[i]
@@ -154,7 +154,7 @@ local function restart(cmd,line,words,player)
 				Spring.SetUnitRulesParam(unitID, "facplop", 1, {inlos = true})
 			end
 		end
-		
+
 		for i=1, #units do
 			local unitID = units[i]
 			Spring.DestroyUnit(unitID, false, true)
@@ -171,23 +171,23 @@ local function bisect(cmd,line,words,player)
 	local increment = math.abs(tonumber(words[1]) or 1)
 	local offset = math.floor(tonumber(words[2]) or 0)
 	local invert = (math.abs(tonumber(words[3]) or 0) == 1) or false
-	
+
 	--[[
 	local occured = {}
 	for i = 1, #syncedGadgetList do
 		occured[syncedGadgetList[i] ] = true
 	end
-	for i = 1, #unsyncedGadgetList do 
+	for i = 1, #unsyncedGadgetList do
 		if not occured[unsyncedGadgetList[i] ] then
 			syncedGadgetList[#syncedGadgetList+1] = unsyncedGadgetList[i]
 		end
 	end
-	
+
 	for i = 1, #syncedGadgetList do
 		Spring.Echo("\"" .. syncedGadgetList[i] .. "\",")
 	end
 	--]]
-	
+
 	for i = 1, #gadgetList do
 		if i >= offset and (offset-i)%increment == 0 then
 			if not invert then
@@ -218,7 +218,7 @@ local function bisect(cmd,line,words,player)
 	local increment = math.abs(tonumber(words[1]) or 1)
 	local offset = math.floor(tonumber(words[2]) or 0)
 	local invert = (math.abs(tonumber(words[3]) or 0) == 1) or false
-	
+
 	for i = 1, #gadgetList do
 		if i >= offset and (offset-i)%increment == 0 then
 			if not invert then
@@ -241,4 +241,3 @@ function gadget:Initialize()
 end
 
 end
-   

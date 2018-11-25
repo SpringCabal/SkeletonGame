@@ -50,11 +50,11 @@ function table.serialize(val, name, skipnewlines, depth)
 
     local tmp = string.rep(" ", depth)
 
-    if name then 
+    if name then
 		if tonumber(name) then -- wrap number indices
-			tmp = tmp .. "[" .. name .. "] = " 
+			tmp = tmp .. "[" .. name .. "] = "
 		else
-			tmp = tmp .. name .. " = " 
+			tmp = tmp .. name .. " = "
 		end
 	end
 

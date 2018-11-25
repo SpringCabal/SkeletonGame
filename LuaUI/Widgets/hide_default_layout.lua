@@ -11,7 +11,7 @@ function widget:GetInfo()
 end
 
 local gameMode
-local function SetGameMode(gameMode)
+local function UpdateGameMode()
     if gameMode == "play" then
         Spring.SendCommands("Console 0")
     else
@@ -21,7 +21,7 @@ end
 
 function widget:Initialize()
     gameMode = Spring.GetGameRulesParam("gameMode")
-    SetGameMode(gameMode)
+    UpdateGameMode()
 
     -- remove Springs default UI stuff
     Spring.SendCommands("ResBar 0", "ToolTip 0", "Clock 0", "Info 0")
@@ -39,6 +39,6 @@ function widget:Update()
     local newGameMode = Spring.GetGameRulesParam("gameMode")
     if gameMode ~= newGameMode then
         gameMode = newGameMode
-        SetGameMode(gameMode)
+        UpdateGameMode()
     end
 end

@@ -16,4 +16,4 @@ before_install:
 #                  # in the root of the repository.
 
 script:
-  - luacheck LuaUI LuaRules LuaIntro
+  - luacheck LuaUI LuaRules LuaIntro *lua

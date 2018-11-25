@@ -72,7 +72,7 @@ function gadget:UnitCreated(unitID, unitDefID, teamID)
 	if offsets[unitDefID] and ud then
 		local mid = offsets[unitDefID].mid
 		local aim = offsets[unitDefID].aim
-		spSetUnitMidAndAimPos(unitID, 
+		spSetUnitMidAndAimPos(unitID,
 			mid[1] + midTable.midx, mid[2] + midTable.midy, mid[3] + midTable.midz,
 			aim[1] + midTable.midx, aim[2] + midTable.midy, aim[3] + midTable.midz, true)
 	end

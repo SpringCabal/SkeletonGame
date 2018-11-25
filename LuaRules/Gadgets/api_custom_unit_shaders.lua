@@ -263,7 +263,7 @@ local function GetObjectMaterial(rendering, objectDefID)
   end
 
   local matInfo = rendering.materialInfos[objectDefID]
-  local mat = rendering.materialDefs[matInfo[1]]
+  mat = rendering.materialDefs[matInfo[1]]
 
   matInfo.UNITDEFID = objectDefID
   matInfo.FEATUREDEFID = -objectDefID
@@ -284,7 +284,7 @@ local function GetObjectMaterial(rendering, objectDefID)
     local texdl = gl.CreateList(function()
     for _,tex in pairs(texUnits) do
       local prefix = tex.tex:sub(1,1)
-      if   (prefix~="%") 
+      if   (prefix~="%")
         and(prefix~="#")
         and(prefix~="!")
         and(prefix~="$")

@@ -13,7 +13,7 @@ function gadget:GetInfo()
 		date    = "27 March 2016",
 		license = "GNU GPL, v2 or later",
 		layer   = -1,
-		enabled = true, 
+		enabled = true,
 	}
 end
 
@@ -23,7 +23,7 @@ end
 -- GG.Attributes.UpdateBuildSpeedMult(unitID, multiplier, [key])
 -- GG.Attributes.UpdateWeaponReloadMult(unitID, multiplier, [key])
 -- GG.Attributes.UpdateMoveSpeedMult(unitID, multiplier, [key])
--- 
+--
 -- The optional key is used to combine multipliers from multiple sources.
 --
 
@@ -63,9 +63,9 @@ local function UpdateLineOfSight(unitID, sightFactor)
 			airLos = ud.airLosRadius or 0,
 		}
 	end
-	
+
 	local state = origUnitDefLineOfSight[unitDefID]
-	
+
 	spSetUnitSensorRadius(unitID, "los",    state.los    * sightFactor)
 	spSetUnitSensorRadius(unitID, "airLos", state.airLos * sightFactor)
 end
@@ -82,8 +82,7 @@ local function UpdateBuildSpeed(unitID, speedFactor)
 	if ud.buildSpeed == 0 then
 		return
 	end
-	
-	local unitDefID = ud.id
+
 	if not origUnitDefBuildSpeed[unitDefID] then
 		origUnitDefBuildSpeed[unitDefID] = {
 			buildSpeed = ud.buildSpeed or 0,
@@ -94,10 +93,10 @@ local function UpdateBuildSpeed(unitID, speedFactor)
 			terraformSpeed = ud.terraformSpeed or 0,
 		}
 	end
-	
+
 	local state = origUnitDefBuildSpeed[unitDefID]
-	
-	spSetUnitBuildSpeed(unitID, 
+
+	spSetUnitBuildSpeed(unitID,
 		state.buildSpeed     * speedFactor,
 		state.repairSpeed    * speedFactor,
 		state.reclaimSpeed   * speedFactor,
@@ -116,7 +115,7 @@ local unitReloadPaused = {}
 
 local function UpdatePausedReload(unitID, unitDefID, gameFrame)
 	local state = origUnitDefReload[unitDefID]
-	
+
 	for i = 1, state.weaponCount do
 		local w = state.weapon[i]
 		local reloadState = spGetUnitWeaponState(unitID, i , 'reloadState')
@@ -126,13 +125,13 @@ local function UpdatePausedReload(unitID, unitDefID, gameFrame)
 			local newReload = 100000
 			if reloadState < 0 then -- unit is already reloaded, so set unit to almost reloaded
 				spSetUnitWeaponState(unitID, i, {
-					reloadTime = newReload, 
+					reloadTime = newReload,
 					reloadState = gameFrame + RELOAD_UPDATE_PERIOD + 1
 				})
 			else
 				local nextReload = gameFrame + (reloadState - gameFrame) * newReload/reloadTime
 				spSetUnitWeaponState(unitID, i, {
-					reloadTime = newReload, 
+					reloadTime = newReload,
 					reloadState = nextReload+RELOAD_UPDATE_PERIOD
 				})
 			end
@@ -143,7 +142,7 @@ end
 local function UpdateReloadSpeed(unitID, speedFactor)
 	local unitDefID = spGetUnitDefID(unitID)
 	local gameFrame = spGetGameFrame()
-	
+
 	if not origUnitDefReload[unitDefID] then
 		local ud = UnitDefs[unitDefID]
 		origUnitDefReload[unitDefID] = {
@@ -151,7 +150,7 @@ local function UpdateReloadSpeed(unitID, speedFactor)
 			weaponCount = #ud.weapons,
 		}
 		local state = origUnitDefReload[unitDefID]
-		
+
 		for i = 1, state.weaponCount do
 			local wd = WeaponDefs[ud.weapons[i].weaponDef]
 			local reload = wd.reload
@@ -165,7 +164,7 @@ local function UpdateReloadSpeed(unitID, speedFactor)
 			end
 		end
 	end
-	
+
 	local state = origUnitDefReload[unitDefID]
 
 	for i = 1, state.weaponCount do
@@ -192,13 +191,13 @@ local function UpdateReloadSpeed(unitID, speedFactor)
 			local nextReload = gameFrame+(reloadState-gameFrame)*newReload/reloadTime
 			if w.burstRate then
 				spSetUnitWeaponState(unitID, i, {
-					reloadTime = newReload, 
-					reloadState = nextReload, 
+					reloadTime = newReload,
+					reloadState = nextReload,
 					burstRate = w.burstRate/speedFactor
 				})
 			else
 				spSetUnitWeaponState(unitID, i, {
-					reloadTime = newReload, 
+					reloadTime = newReload,
 					reloadState = nextReload
 				})
 			end
@@ -214,11 +213,11 @@ local origUnitDefSpeed = {}
 
 local function UpdateMovementSpeed(unitID, speedFactor, accelerationFactor, turnFactor)
 	local unitDefID = spGetUnitDefID(unitID)
-	
+
 	if not origUnitDefSpeed[unitDefID] then
 		local ud = UnitDefs[unitDefID]
 		local moveData = spGetUnitMoveTypeData(unitID)
-	
+
 		origUnitDefSpeed[unitDefID] = {
 			origSpeed = ud.speed,
 			origReverseSpeed = (moveData.name == "ground") and moveData.maxReverseSpeed or ud.speed,
@@ -228,11 +227,11 @@ local function UpdateMovementSpeed(unitID, speedFactor, accelerationFactor, turn
 			origMaxDec = ud.maxDec,
 			movetype = -1,
 		}
-		
+
 		local state = origUnitDefSpeed[unitDefID]
 		state.movetype = GetMovetype(ud)
 	end
-	
+
 	local state = origUnitDefSpeed[unitDefID]
 	local decFactor = accelerationFactor
 	local isSlowed = speedFactor < 1
@@ -256,21 +255,21 @@ local function UpdateMovementSpeed(unitID, speedFactor, accelerationFactor, turn
 			end
 		end
 	end
-	
+
 	local turnAccelFactor = turnFactor
 	if turnAccelFactor <= 0 then
 		turnAccelFactor = 0
 	end
-	
-	local turnFactor = turnAccelFactor
+
+	turnFactor = turnAccelFactor
 	if turnFactor <= 0.001 then
 		turnFactor = 0.001
 	end
-	
+
 	if accelerationFactor <= 0 then
 		accelerationFactor = 0.001
 	end
-	
+
 	if spMoveCtrlGetTag(unitID) == nil then
 		if state.movetype == 0 then
 			local attribute = {
@@ -288,12 +287,12 @@ local function UpdateMovementSpeed(unitID, speedFactor, accelerationFactor, turn
 			}
 			spSetGunshipMoveTypeData (unitID, attribute)
 		elseif state.movetype == 2 then
-			local accRate = state.origMaxAcc*accelerationFactor 
+			local accRate = state.origMaxAcc * accelerationFactor
 			if isSlowed and accRate > speedFactor then
 				-- Clamp acceleration to mitigate prevent brief speedup when executing new order
 				-- 1 is here as an arbitary factor, there is no nice conversion which means that 1 is a good value.
-				accRate = speedFactor 
-			end 
+				accRate = speedFactor
+			end
 			local attribute =  {
 				maxSpeed        = state.origSpeed        * speedFactor,
 				maxReverseSpeed = state.origReverseSpeed * speedFactor,
@@ -323,10 +322,10 @@ local function UpdateMultTable(multTable, unitID, mult, key)
 	if mult then
 		return false
 	end
-	
+
 	key = key or -1
 	multTable[unitID] = multTable[unitID] or {}
-	
+
 	if mult == 1 then
 		multTable[unitID][key] = nil
 	else

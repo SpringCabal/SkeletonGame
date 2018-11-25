@@ -14,7 +14,7 @@ end
 
 local Chili
 
-local forceUpdate = false 
+local forceUpdate = false
 options_path = 'Settings/Interface/Docking'
 options_order = { 'dockEnabled', 'dockThreshold', }
 options = {
@@ -24,11 +24,11 @@ options = {
 		advanced = true,
 		value = 10,
 		min=1,max=50,step=1,
-		OnChange = {function() 
+		OnChange = {function()
 			forceUpdate = true
 		end },
 	},
-	
+
 	dockEnabled = {
 		name = 'Use docking',
 		advanced = false,
@@ -53,7 +53,7 @@ function widget:Initialize()
 
 	-- setup Chili
 	Chili = WG.Chili
-end 
+end
 
 local frameCounter = 0
 
@@ -67,54 +67,52 @@ local function GetBoxRelation(boxa, boxb)
 	local mpbv = 0
 
 	local snaph, snapv
-	
+
 	if not (boxa[2] > boxb[4] or boxa[4] < boxb[2]) then  -- "vertical collision" they are either to left or to right
 		mpah = (boxa[3] + boxa[1])/2  -- gets midpos
-		mpbh = (boxb[3] + boxb[1])/2 
-		snaph = true 
-	end 
+		mpbh = (boxb[3] + boxb[1])/2
+		snaph = true
+	end
 
 	if not (boxa[1] > boxb[3] or boxa[3] <boxb[1]) then  -- "horizontal collision" they are above or below
 		mpav = (boxa[4] + boxa[2])/2  -- gets midpos
-		mpbv = (boxb[4] + boxb[2])/2 
+		mpbv = (boxb[4] + boxb[2])/2
 		snapv = true
-	end 
-	
-	
+	end
+
+
 	local axis = nil
 	local dist = 99999
-	if (snaph) then 
-		if mpah < mpbh then 
+	if (snaph) then
+		if mpah < mpbh then
 			axis = 'R'
 			dist = boxb[1] - boxa[3]
-		else 
+		else
 			axis = 'L'
 			dist = boxa[1] - boxb[3]
-		end 
-	end 
-	
-	if (snapv) then 
-		if mpav < mpbv then 
+		end
+	end
+
+	if (snapv) then
+		if mpav < mpbv then
 			local nd = boxb[2] - boxa[4]
-			if  math.abs(nd) < math.abs(dist) then  -- only snap this axis if its shorter "snap" distance 
+			if  math.abs(nd) < math.abs(dist) then  -- only snap this axis if its shorter "snap" distance
 				axis = 'D'
 				dist = nd
-			end 
-		else 
+			end
+		else
 			local nd = boxa[2] - boxb[4]
-			if math.abs(nd) < math.abs(dist) then 
+			if math.abs(nd) < math.abs(dist) then
 				axis = 'T'
 				dist = nd
-			end 
-			
-		end 
-	end 
-	
-	if axis ~= nil then return axis, dist 
+			end
+
+		end
+	end
+
+	if axis ~= nil then return axis, dist
 	else return nil, nil end
 end
-
- 
 
 
 -- returns closest axis to snap to existing windows or screen edges - first parameter is axis (L/R/T/D) second is snap distance
@@ -122,37 +120,37 @@ local function GetClosestAxis(winPos, dockWindows, win)
 	local dockDist = options.dockThreshold.value
 	local minDist =  dockDist + 1
 	local minAxis= 'L'
-	
-	local function CheckAxis(dist, newAxis) 
-		if dist < minDist and dist ~= 0 then 
-			if newAxis == 'L' and (winPos[1] - dist < 0 or winPos[3] - dist > Chili.Screen0.width) then return end 
-			if newAxis == 'R' and (winPos[1] + dist < 0 or winPos[3] + dist > Chili.Screen0.width) then return end 
-			if newAxis == 'T' and (winPos[2] - dist < 0 or winPos[4] - dist > Chili.Screen0.height) then return end 
-			if newAxis == 'D' and (winPos[2] + dist < 0 or winPos[4] + dist > Chili.Screen0.height) then return end 
+
+	local function CheckAxis(dist, newAxis)
+		if dist < minDist and dist ~= 0 then
+			if newAxis == 'L' and (winPos[1] - dist < 0 or winPos[3] - dist > Chili.Screen0.width) then return end
+			if newAxis == 'R' and (winPos[1] + dist < 0 or winPos[3] + dist > Chili.Screen0.width) then return end
+			if newAxis == 'T' and (winPos[2] - dist < 0 or winPos[4] - dist > Chili.Screen0.height) then return end
+			if newAxis == 'D' and (winPos[2] + dist < 0 or winPos[4] + dist > Chili.Screen0.height) then return end
 			minDist = dist
 			minAxis = newAxis
-		end 
-	end 
+		end
+	end
 
-	CheckAxis(winPos[1], 'L') 
+	CheckAxis(winPos[1], 'L')
 	CheckAxis(winPos[2], 'T')
 	CheckAxis(Chili.Screen0.width  - winPos[3], 'R')
 	CheckAxis(Chili.Screen0.height - winPos[4], 'D')
-	if (minDist < dockDist and minDist ~= 0) then 
+	if (minDist < dockDist and minDist ~= 0) then
 		return minAxis, minDist  -- screen edges have priority ,dont check anything else
-	end 
-	
-	for w, dp in pairs(dockWindows) do 
-		if win ~= w then 
-			local a, d = GetBoxRelation(winPos, dp)
-			if a ~= nil then 
-				CheckAxis(d, a)
-			end 
-		end 
-	end 
+	end
 
-	
-	if minDist < dockDist and minDist ~= 0 then 
+	for w, dp in pairs(dockWindows) do
+		if win ~= w then
+			local a, d = GetBoxRelation(winPos, dp)
+			if a ~= nil then
+				CheckAxis(d, a)
+			end
+		end
+	end
+
+
+	if minDist < dockDist and minDist ~= 0 then
 		return minAxis, minDist
 	else
 		return nil, nil
@@ -160,7 +158,7 @@ local function GetClosestAxis(winPos, dockWindows, win)
 end
 
 
--- snaps box data with axis and distance 
+-- snaps box data with axis and distance
 local function SnapBox(wp, a,d)
 	if a == 'L' then
 		wp[1] = wp[1] - d
@@ -175,7 +173,7 @@ local function SnapBox(wp, a,d)
 		wp[2] = wp[2] + d
 		wp[4] = wp[4] + d
 	end
-end 
+end
 
 
 local lastCount = 0
@@ -186,26 +184,26 @@ local function GetButtonPos(win)
 	local size = 5 -- button thickness
 	local mindist = win.x*5000 + win.height
 	local mode = 'L'
-	
+
 	local dist = win.y*5000 + win.width
 	if dist < mindist then
 		mindist = dist
 		mode = 'T'
-	end 
-	
+	end
+
 	dist = (Chili.Screen0.width - win.x - win.width)*5000 + win.height
 	if dist < mindist then
 		mindist = dist
 		mode = 'R'
 	end
-	
+
 	dist = (Chili.Screen0.height - win.y - win.height)*5000 + win.width
 	if dist < mindist then
 		mindist = dist
 		mode = 'B'
 	end
-	
-	
+
+
 	if mode == 'L' then
 		return {x=win.x-3, y= win.y, width = size, height = win.height}
 	elseif mode =='T' then
@@ -214,7 +212,7 @@ local function GetButtonPos(win)
 		return {x=win.x + win.width - size-3, y= win.y, width = size, height = win.height}
 	elseif mode=='B' then
 		return {x=win.x, y= win.y + win.height - size-3, width = win.width, height = size}
-	end 
+	end
 end
 
 
@@ -255,11 +253,11 @@ local function ApplySavedSettingToWindow(win)
 
 		if win.fixedRatio then
 			local limit = 0
-			if (w > h) then limit = w else limit = h end 
+			if (w > h) then limit = w else limit = h end
 			if (win.width > win.height) then
 				w = limit
 				h = limit * (win.height/win.width)
-			else 
+			else
 				h = limit
 				w = limit * (win.width/win.height)
 			end
@@ -324,7 +322,7 @@ local function HandleMinimizeBar(objs)
 								else
 									win.selfImplementedMinimizable(false)
 								end
-							else 
+							else
 								self.tooltip = 'Minimize ' .. win.name
 								self.backgroundColor={0,1,0,1}
 								if not win.selfImplementedMinimizable then
@@ -408,13 +406,12 @@ local function DockResize(obj)
 			if sign(wp[2] - lp[2]) == 0 then
 				break
 			end
-		elseif (resizing) then
+		-- elseif (resizing) then
 			--FIXME
 		end
 
 		obj:SetPos(dp[1], dp[2])
-		break
-	until true
+	until false
 
 	local winPos = { obj.x, obj.y, obj.x + obj.width, obj.y + obj.height }
 	lastPos[obj.name] = winPos
@@ -422,7 +419,7 @@ local function DockResize(obj)
 end
 
 
-function widget:DrawScreen() 
+function widget:DrawScreen()
 	frameCounter = frameCounter + 1
 	if (frameCounter % 88 ~= 87) and (#Chili.Screen0.children == lastCount) then return end
 	lastCount = #Chili.Screen0.children
@@ -451,7 +448,7 @@ function widget:DrawScreen()
 		end
 	end
 
-	if forceUpdate or (newWindow and options.dockEnabled.value) then 
+	if forceUpdate or (newWindow and options.dockEnabled.value) then
 		forceUpdate = false
 		local dockWindows = {}
 		local collideWindows = {}
@@ -472,7 +469,7 @@ function widget:DrawScreen()
 		repeat
 			for win, wp in pairs(dockWindows) do
 				local numTries = 5
-				repeat 
+				repeat
 					local a,d = GetClosestAxis(wp, collideWindows, win)
 					if a then
 						SnapBox(wp,a,d)
@@ -491,7 +488,7 @@ function widget:DrawScreen()
 			lastPos[win.name]  = winPos
 			settings[win.name] = GetEdgePositions(win)
 		end
-	end 
+	end
 
 	HandleMinimizeBar(bynames)
 

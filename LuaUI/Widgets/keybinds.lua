@@ -20,26 +20,26 @@ local white = "\255\255\255\255"
 
 local function SetBindings()
     local binds = { --real keybinds
-        
+
         "Any+pause  pause",
-        
+
         --"Alt+b  debug",
         --"--Alt+v  debugcolvol",
 
 		"ctrl+q quitforce",
-		
+
 		"f12 screenshot",
-		
+
 		"Any+up moveforward ",
 		"Any+left moveleft ",
 		"Any+right moveright",
 		"Any+down moveback",
-		
+
 		"Any+w moveforward ",
 		"Any+a moveleft ",
 		"Any+d moveright",
 		"Any+s moveback",
-		
+
 		"Any+pageup moveup",
 		"Any+pagedown movedown",
     }
@@ -50,7 +50,7 @@ local function SetBindings()
 end
 
 local gameMode
-local function SetGameMode(gameMode)
+local function UpdateGameMode()
     if gameMode == "play" then
         Spring.SendCommands("unbindall") --muahahahaha
         Spring.SendCommands("unbindkeyset enter chat") --because because.
@@ -62,7 +62,7 @@ end
 
 function widget:Initialize()
     gameMode = Spring.GetGameRulesParam("gameMode")
-    SetGameMode(gameMode)
+    UpdateGameMode()
 
     bindText = { -- keybinds told to player
         --purple .. "Q : " .. white .. "swap pull / push",
@@ -70,7 +70,7 @@ function widget:Initialize()
         --purple .. "W : " .. white .. "jump (+ left mouse)",
         --purple .. "S : " .. white .. "stop shooting & moving",
     }
-    
+
     mouseText = {
 --         purple .. "Left click: " .. white .. "Shoot",
 --         purple .. "Right click : " .. white .. "Place Mines",
@@ -93,30 +93,30 @@ function MakeBindingText()
     if (not WG.Chili) then
 		return
 	end
-    
+
     for _,child in pairs(children) do
         screen0:RemoveChild(child)
     end
-    
-    
+
+
     h = 20
     y = h*(#bindText + #mouseText)
     x = 10
-    
+
     for _,text in ipairs(mouseText) do
         AddLine(text,x,y)
         y = y - h
-    end    
+    end
     for _,text in ipairs(bindText) do
         AddLine(text,x,y)
         y = y - h
     end
 end
 
-function  AddLine(text,x,y,h)   
+function  AddLine(text, x_, y_)
     children[#children+1] = Chili.Label:New{
-        x = x,
-        bottom = y,
+        x = x_,
+        bottom = y_,
         parent = screen0,
         caption = text,
     }
@@ -126,6 +126,6 @@ function widget:Update()
     local newGameMode = Spring.GetGameRulesParam("gameMode")
     if gameMode ~= newGameMode then
         gameMode = newGameMode
-        SetGameMode(gameMode)
+        UpdateGameMode()
     end
 end

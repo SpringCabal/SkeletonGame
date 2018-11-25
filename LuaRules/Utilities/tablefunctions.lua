@@ -50,7 +50,6 @@ function Spring.Utilities.TableToString(data)
             str = str .. "false"
         end
     elseif(type(data) == "table") then
-        local i, v
         for i, v in pairs(data) do
             -- Check for a table in a table
             if(type(v) == "table") then
@@ -87,14 +86,14 @@ local function TableEcho(data, name, indent)
 	name = name or "TableEcho"
 	Spring.Echo((indent or "") .. name .. " = {")
 	indent = indent or "    "
-	for name, v in pairs(data) do
+	for n, v in pairs(data) do
 		local ty =  type(v)
 		if ty == "table" then
-			TableEcho(v, name, indent .. "    ")
+			TableEcho(v, n, indent .. "    ")
 		elseif ty == "boolean" then
-			Spring.Echo(indent .. name .. " = " .. (v and "true" or "false"))
+			Spring.Echo(indent .. n .. " = " .. (v and "true" or "false"))
 		else
-			Spring.Echo(indent .. name .. " = " .. v)
+			Spring.Echo(indent .. n .. " = " .. v)
 		end
 	end
 	Spring.Echo(indent .. "}")

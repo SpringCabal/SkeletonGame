@@ -74,13 +74,13 @@ local function SetupShaderTable()
 
 		varying vec4 vertex;
 		varying vec4 color;
-  
+
 		void main()
 		{
 		gl_TexCoord[0]= gl_TextureMatrix[0]*gl_MultiTexCoord0;
 		gl_Vertex.x = abs(mirrorX-gl_Vertex.x);
 		gl_Vertex.z = abs(mirrorZ-gl_Vertex.z);
-		
+
 		float alpha = 1.0;
 		#ifdef curvature
 		  if(mirrorX)gl_Vertex.y -= pow(abs(gl_Vertex.x-left*mirrorX)/150.0, 2.0);
@@ -90,7 +90,7 @@ local function SetupShaderTable()
 			if(mirrorZ) alpha -= pow(abs(gl_Vertex.z-up*mirrorZ)/lengthZ, 2.0);
 			alpha = 1.0 + (6.0 * (alpha + 0.18));
 		#endif
-  
+
 		float ff = 20000.0;
 		if((mirrorZ && mirrorX))
 		  ff=ff/(pow(abs(gl_Vertex.z-up*mirrorZ)/150.0, 2.0)+pow(abs(gl_Vertex.x-left*mirrorX)/150.0, 2.0)+2.0);
@@ -98,14 +98,14 @@ local function SetupShaderTable()
 		  ff=ff/(pow(abs(gl_Vertex.x-left*mirrorX)/150.0, 2.0)+2.0);
 		else if(mirrorZ)
 		  ff=ff/(pow(abs(gl_Vertex.z-up*mirrorZ)/150.0, 2.0)+2.0);
-  
+
 		gl_Position  = gl_ModelViewProjectionMatrix*gl_Vertex;
 		//gl_Position.z+ff;
-		
+
 		#ifdef edgeFog
 		  gl_FogFragCoord = length((gl_ModelViewMatrix * gl_Vertex).xyz)+ff; //see how Spring shaders do the fog and copy from there to fix this
 		#endif
-		
+
 		gl_FrontColor = vec4(brightness * gl_Color.rgb, alpha);
 
 		color = gl_FrontColor;
@@ -162,7 +162,7 @@ local function IsIsland()
 		-- right edge
 		if GetGroundHeight(Game.mapSizeX, i) > 0 then
 			return false
-		end	
+		end
 	end
 	return true
 end
@@ -184,7 +184,7 @@ local function DrawMapVertices(useMirrorShader)
 		local Normal = gl.Normal
 		local GetGroundNormal = Spring.GetGroundNormal
 		local mapSizeX, mapSizeZ = Game.mapSizeX, Game.mapSizeZ
-	
+
 		local sten = {0, floor(Game.mapSizeZ/Scale)*Scale, 0}--do every other strip reverse
 		local xm0, xm1 = 0, 0
 		local xv0, xv1 = 0,math.abs(dx)+sx
@@ -196,7 +196,7 @@ local function DrawMapVertices(useMirrorShader)
 		gl.TexCoord(0, sten[2]/Game.mapSizeZ)
 		Vertex(xv1, sggh(0,sten[2]),abs(dz+sten[2])+sz)--start and end with a double vertex
 		end
-	
+
 		for x=0,Game.mapSizeX-Scale,Scale do
 			xv0, xv1 = xv1, abs(dx+x+Scale)+sx
 			xm0, xm1 = xm1, xm1+Scale
@@ -224,10 +224,10 @@ local function DrawMapVertices(useMirrorShader)
 		doMap(-Game.mapSizeX,-Game.mapSizeZ,-Game.mapSizeX,-Game.mapSizeZ)
 		doMap(0,-Game.mapSizeZ,0,-Game.mapSizeZ)
 		doMap(-Game.mapSizeX,-Game.mapSizeZ,Game.mapSizeX,-Game.mapSizeZ)
-	
+
 		doMap(-Game.mapSizeX,0,-Game.mapSizeX,0)
 		doMap(-Game.mapSizeX,0,Game.mapSizeX,0)
-	
+
 		doMap(-Game.mapSizeX,-Game.mapSizeZ,-Game.mapSizeX,Game.mapSizeZ)
 		doMap(0,-Game.mapSizeZ,0,Game.mapSizeZ)
 		doMap(-Game.mapSizeX,-Game.mapSizeZ,Game.mapSizeX,Game.mapSizeZ)
@@ -236,13 +236,13 @@ end
 
 local function DrawOMap(useMirrorShader)
 	gl.Blending(GL.SRC_ALPHA,GL.ONE_MINUS_SRC_ALPHA)
-	gl.DepthTest(GL.LEQUAL) 
+	gl.DepthTest(GL.LEQUAL)
 		gl.Texture(realTex)
 	gl.BeginEnd(GL.TRIANGLE_STRIP,DrawMapVertices, useMirrorShader)
 	gl.DepthTest(false)
 	gl.Color(1,1,1,1)
 	gl.Blending(GL.SRC_ALPHA,GL.ONE_MINUS_SRC_ALPHA)
-	
+
 	----draw map compass text
 	gl.PushAttrib(GL.ALL_ATTRIB_BITS)
 	gl.Texture(false)
@@ -250,17 +250,16 @@ local function DrawOMap(useMirrorShader)
 	gl.DepthTest(false)
 	gl.Color(1,1,1,1)
 	gl.PopAttrib()
-	----	
+	----
 end
 
 function widget:Initialize()
-	
 	if not drawingEnabled then
 		return
 	end
-	
+
 	--Spring.SendCommands("mapborder 0")
-	
+
 	if island == nil then
 		island = IsIsland()
 	end
@@ -307,7 +306,7 @@ local function DrawWorldFunc() --is overwritten when not using the shader
 	local glTranslate = gl.Translate
 	local glUniform = gl.Uniform
 	local GamemapSizeZ, GamemapSizeX = Game.mapSizeZ,Game.mapSizeX
-	
+
 	gl.Fog(true)
 	gl.FogCoord(1)
 	gl.UseShader(mirrorShader)
@@ -336,7 +335,7 @@ local function DrawWorldFunc() --is overwritten when not using the shader
 	glUniform(uleft, 1)
 	glTranslate(-GamemapSizeX*2,0,0)
 	gl.CallList(dList)
-	
+
 	glUniform(umirrorX, 0)
 	glTranslate(GamemapSizeX,0,0)
 	gl.CallList(dList)
@@ -344,7 +343,7 @@ local function DrawWorldFunc() --is overwritten when not using the shader
 	glUniform(uup, 1)
 	glTranslate(0,0,-GamemapSizeZ*2)
 	gl.CallList(dList)
-	
+
 	glUniform(uup, 0)
 	glUniform(umirrorZ, 0)
 	glUniform(umirrorX, GamemapSizeX)
@@ -360,7 +359,7 @@ local function DrawWorldFunc() --is overwritten when not using the shader
 	gl.Texture(false)
 	gl.PopMatrix()
 	gl.UseShader(0)
-	
+
 	gl.Fog(false)
 end
 

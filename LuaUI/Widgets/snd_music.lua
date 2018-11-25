@@ -53,7 +53,7 @@ function widget:Update(dt)
             StartPlaying()
         end
     end
-end 
+end
 
 function widget:Shutdown()
     Spring.StopSoundStream()

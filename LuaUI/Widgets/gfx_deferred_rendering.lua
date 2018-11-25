@@ -76,8 +76,8 @@ local GLSLRenderer = true
 --------------------------------------------------------------------------------
 
 local vsx, vsy
-local ivsx = 1.0 
-local ivsy = 1.0 
+local ivsx = 1.0
+local ivsy = 1.0
 local screenratio = 1.0
 
 local depthPointShader
@@ -93,8 +93,8 @@ local lightposlocBeam  = nil
 local lightpos2locBeam  = nil
 local lightcolorlocBeam  = nil
 local lightparamslocBeam  = nil
-local uniformEyePosBeam 
-local uniformViewPrjInvBeam 
+local uniformEyePosBeam
+local uniformViewPrjInvBeam
 
 --------------------------------------------------------------------------------
 --Light falloff functions: http://gamedev.stackexchange.com/questions/56897/glsl-light-attenuation-color-and-intensity-formula
@@ -103,7 +103,7 @@ local uniformViewPrjInvBeam
 local verbose = false
 local function VerboseEcho(...)
 	if verbose then
-		Spring.Echo(...) 
+		Spring.Echo(...)
 	end
 end
 
@@ -153,7 +153,7 @@ function widget:Initialize()
 	Spring.SetConfigInt("AllowDeferredModelRendering", 1)
 
 	if (Spring.GetConfigString("AllowDeferredMapRendering") == '0' or Spring.GetConfigString("AllowDeferredModelRendering") == '0') then
-		Spring.Echo('Deferred Rendering (gfx_deferred_rendering.lua) requires  AllowDeferredMapRendering and AllowDeferredModelRendering to be enabled in springsettings.cfg!') 
+		Spring.Echo('Deferred Rendering (gfx_deferred_rendering.lua) requires  AllowDeferredMapRendering and AllowDeferredModelRendering to be enabled in springsettings.cfg!')
 		widgetHandler:RemoveWidget()
 		return
 	end
@@ -213,7 +213,7 @@ function widget:Initialize()
 				uniformEyePosBeam     = glGetUniformLocation(depthBeamShader, 'eyePos')
 				uniformViewPrjInvBeam = glGetUniformLocation(depthBeamShader, 'viewProjectionInv')
 			end
-			
+
 			WG.DeferredLighting_RegisterFunction = DeferredLighting_RegisterFunction
 		end
 		screenratio = vsy / vsx --so we dont overdraw and only always draw a square
@@ -250,7 +250,7 @@ local function DrawLightType(lights, lightsCount, lighttype) -- point = 0 beam =
 	glTexture(2, "$map_gbuffer_normtex")
 	glTexture(3, "$map_gbuffer_zvaltex")
 	glTexture(4, "$model_gbuffer_spectex")
-	
+
 	local cx, cy, cz = spGetCameraPosition()
 	for i = 1, lightsCount do
 		local light = lights[i]
@@ -268,20 +268,19 @@ local function DrawLightType(lights, lightsCount, lighttype) -- point = 0 beam =
 			local dist_sq = (light.px-cx)^2 + (light.py-cy)^2 + (light.pz-cz)^2
 			local ratio = lightradius / math.sqrt(dist_sq) * 1.5
 			glUniform(lightposlocPoint, light.px, light.py, light.pz, param.radius) --in world space
-			glUniform(lightcolorlocPoint, param.r * light.colMult, param.g * light.colMult, param.b * light.colMult, 1) 
+			glUniform(lightcolorlocPoint, param.r * light.colMult, param.g * light.colMult, param.b * light.colMult, 1)
 			glTexRect(
-				math.max(-1 , (sx-0.5)*2-ratio*screenratio), 
-				math.max(-1 , (sy-0.5)*2-ratio), 
-				math.min( 1 , (sx-0.5)*2+ratio*screenratio), 
-				math.min( 1 , (sy-0.5)*2+ratio), 
-				math.max( 0 , sx - 0.5*ratio*screenratio), 
-				math.max( 0 , sy - 0.5*ratio), 
+				math.max(-1 , (sx-0.5)*2-ratio*screenratio),
+				math.max(-1 , (sy-0.5)*2-ratio),
+				math.min( 1 , (sx-0.5)*2+ratio*screenratio),
+				math.min( 1 , (sy-0.5)*2+ratio),
+				math.max( 0 , sx - 0.5*ratio*screenratio),
+				math.max( 0 , sy - 0.5*ratio),
 				math.min( 1 , sx + 0.5*ratio*screenratio),
 				math.min( 1 , sy + 0.5*ratio)
 			) -- screen size goes from -1, -1 to 1, 1; uvs go from 0, 0 to 1, 1
-		end 
+		end
 		if lighttype == 1 then -- beam
-			local lightradius = 0
 			local px = light.px+light.dx*0.5
 			local py = light.py+light.dy*0.5
 			local pz = light.pz+light.dz*0.5
@@ -296,15 +295,15 @@ local function DrawLightType(lights, lightsCount, lighttype) -- point = 0 beam =
 
 			glUniform(lightposlocBeam, light.px, light.py, light.pz, param.radius) --in world space
 			glUniform(lightpos2locBeam, light.px+light.dx, light.py+light.dy+24, light.pz+light.dz, param.radius) --in world space, the magic constant of +24 in the Y pos is needed because of our beam distance calculator function in GLSL
-			glUniform(lightcolorlocBeam, param.r * light.colMult, param.g * light.colMult, param.b * light.colMult, 1) 
+			glUniform(lightcolorlocBeam, param.r * light.colMult, param.g * light.colMult, param.b * light.colMult, 1)
 			--TODO: use gl.Shape instead, to avoid overdraw
 			glTexRect(
-				math.max(-1 , (sx-0.5)*2-ratio*screenratio), 
-				math.max(-1 , (sy-0.5)*2-ratio), 
-				math.min( 1 , (sx-0.5)*2+ratio*screenratio), 
-				math.min( 1 , (sy-0.5)*2+ratio), 
-				math.max( 0 , sx - 0.5*ratio*screenratio), 
-				math.max( 0 , sy - 0.5*ratio), 
+				math.max(-1 , (sx-0.5)*2-ratio*screenratio),
+				math.max(-1 , (sy-0.5)*2-ratio),
+				math.min( 1 , (sx-0.5)*2+ratio*screenratio),
+				math.min( 1 , (sy-0.5)*2+ratio),
+				math.max( 0 , sx - 0.5*ratio*screenratio),
+				math.max( 0 , sy - 0.5*ratio),
 				math.min( 1 , sx + 0.5*ratio*screenratio),
 				math.min( 1 , sy + 0.5*ratio)
 			) -- screen size goes from -1, -1 to 1, 1; uvs go from 0, 0 to 1, 1
@@ -319,24 +318,24 @@ function widget:DrawWorld()
 		widgetHandler:RemoveWidget()
 		return
 	end
-	
+
 	if collectionFunctionCount == 0 then
 		return
 	end
-	
+
 	-- parameters for each light:
 	-- {x, y, z, params = {r, g, b, radius, ifBeam, [beamStartOffset, beamOffset]}}
 	-- Also dx, dy, dz for beams
-	
+
 	local beamLights = {}
 	local beamLightCount = 0
 	local pointLights = {}
 	local pointLightCount = 0
-	
+
 	for i = 1, collectionFunctionCount do
 		beamLights, beamLightCount, pointLights, pointLightCount = collectionFunctions[i](beamLights, beamLightCount, pointLights, pointLightCount)
 	end
-	
+
 	glBlending(GL.DST_COLOR, GL.ONE) -- VERY IMPORTANT: ResultR = LightR*DestinationR+1*DestinationR
 	--http://www.andersriggelsen.dk/glblendfunc.php
 	--glBlending(GL.ONE, GL.ZERO) --default

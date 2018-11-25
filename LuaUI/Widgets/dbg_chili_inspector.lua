@@ -64,8 +64,8 @@ local function tracePerWidget(node)
 			local caption = ("%s"):format(w.whInfo.name)
 			local nodec = node:Add(caption)
 			for i,obj in pairs(t) do
-				local caption = ("%s: %s (redrawn: %i)"):format(obj.classname, obj.name, obj._redrawCounter or 0)
-				local nodec2 = nodec:Add(caption)
+				local c = ("%s: %s (redrawn: %i)"):format(obj.classname, obj.name, obj._redrawCounter or 0)
+				local nodec2 = nodec:Add(c)
 			end
 		end
 	end
@@ -98,7 +98,7 @@ function widget:Initialize()
 				y=0, bottom=-25,
 				align = "right", valign = "bottom",
 				caption = "Lua MemUsage: 0MB",
-				
+
 			},
 			Chili.Button:New{
 				right = 0, width = 50,

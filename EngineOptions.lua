@@ -22,12 +22,10 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
---  Example EngineOptions.lua 
+--  Example EngineOptions.lua
 --
 
-local options = 
-{
- 
+local options = {
   {
     key    = "MaxUnits",
     name   = "Max units",
@@ -39,7 +37,7 @@ local options =
     step   = 1,  -- quantization is aligned to the def value
                     -- (step <= 0) means that there is no quantization
   },
-  
+
   {
     key    = "GhostedBuildings",
     name   = "Ghosted buildings",
@@ -62,7 +60,7 @@ local options =
     desc   = "Limits maximum and minimum speed that the players will be allowed to change to (key = 'LimitSpeed')",
     type   = "section",
   },
-  
+
   {
     key    = "MaxSpeed",
     name   = "Maximum game speed",
@@ -75,7 +73,7 @@ local options =
     step   = 0.1,  -- quantization is aligned to the def value
                     -- (step <= 0) means that there is no quantization
   },
-  
+
   {
     key    = "MinSpeed",
     name   = "Minimum game speed",
@@ -88,7 +86,7 @@ local options =
     step   = 0.1,  -- quantization is aligned to the def value
                     -- (step <= 0) means that there is no quantization
   },
-  
+
   {
     key    = "DisableMapDamage",
     name   = "Undeformable map",
