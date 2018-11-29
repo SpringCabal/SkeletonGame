@@ -34,12 +34,13 @@ else
 -- Unsynced
 ----------------------------
     function gadget:Initialize()
-        if not Script.LuaUI(registerGadgetEvent) then return end
-
         local registerGadgetEvent = COMM_EVENTS.REGISTER_GADGET
+
+        if not Script.LuaUI[registerGadgetEvent] then return end
+
         gadgetHandler:AddSyncAction(registerGadgetEvent,
             function (_, vfsFilePath)
-                if not Script.LuaUI(registerGadgetEvent) then
+                if not Script.LuaUI[registerGadgetEvent] then
                     Spring.Log(LOG_SECTION, LOG.ERROR, "Missing Script.LuaUI." .. tostring(registerGadgetEvent))
                     return
                 end

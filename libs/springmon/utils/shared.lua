@@ -63,10 +63,17 @@ function ReloadFile(path)
         "Reloading addon: " .. tostring(addonName) .. "...")
 
     if luaContextName == "LuaUI" then
-        widgetHandler:DisableWidget(addonName)
-        widgetHandler:EnableWidget(addonName)
+        if widgetHandler:DisableWidget(addonName) then
+            widgetHandler:EnableWidget(addonName)
+        else
+            widgetHandler:LoadWidget(path)
+        end
     elseif luaContextName == "LuaRules" then
-        gadgetHandler:DisableGadget(addonName)
-        gadgetHandler:EnableGadget(addonName)
+        if gadgetHandler:DisableGadget(addonName) then
+            gadgetHandler:EnableGadget(addonName)
+        else
+            Spring.Echo("enable")
+            gadgetHandler:EnableGadget(path)
+        end
     end
 end

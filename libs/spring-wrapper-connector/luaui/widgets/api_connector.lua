@@ -35,6 +35,19 @@ function Connector.Register(name, callback)
 	end
 	table.insert(Connector.callbacks[name], callback)
 end
+
+function Connector.Unregister(name, callback)
+	if not Connector.callbacks[name] then
+		return
+	end
+	for i, clb in ipairs(Connector.callbacks[name]) do
+		if clb == callback then
+			table.remove(Connector.callbacks[name], i)
+			return
+		end
+	end
+	Spring.Log(LOG_SECTION, LOG.ERROR, "No callback to remove: ", name)
+end
 --------------------------------------------------------------------------------
 -- End of Public interface
 --------------------------------------------------------------------------------
@@ -76,7 +89,7 @@ local function SocketConnect()
 	res, err = client:connect(host, port)
 	if not res and not res=="timeout" then
 		widgetHandler:RemoveWidget(self)
-		Spring.Log("connector", "error", "Error in connect wrapper: " .. err)
+		Spring.Log(LOG_SECTION, LOG.ERROR, "Error in connect wrapper: " .. err)
 		return false
 	end
 	return true
