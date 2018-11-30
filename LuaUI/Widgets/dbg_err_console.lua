@@ -16,7 +16,7 @@ local slen = string.len
 local sfind = string.find
 local slower = string.lower
 
-local Chili,screen,window,msgWindow,clearButton,reloadButton,log
+local Chili,screen,window,log
 
 local COMMAND_NAME = "toggleErrorConsole"
 
@@ -57,7 +57,7 @@ function loadWindow()
     }
 
     -- chat box
-    msgWindow = Chili.ScrollPanel:New{
+    local msgWindow = Chili.ScrollPanel:New{
         verticalSmartScroll = true,
         scrollPosX  = 0,
         scrollPosY  = 0,
@@ -70,18 +70,25 @@ function loadWindow()
         borderColor = {0,0,0,0},
     }
 
-    log = Chili.StackPanel:New{
+    log = Chili.TextBox:New {
         parent      = msgWindow,
-        x           = 0,
-        y           = 0,
-        height      = 0,
         width       = '100%',
-        autosize    = true,
-        resizeItems = false,
-        padding     = {0,5,0,0},
-        itemPadding = {3,0,3,8},
-        itemMargin  = {3,0,3,2},
-        preserveChildrenOrder = true,
+        padding     = {0,0,0,0},
+        align       = "left",
+        valign      = "ascender",
+
+        selectable = true,
+        autoHeight  = true,
+        autoObeyLineHeight = true,
+        subTooltips = true,
+
+        font        = {
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 4,
+            outlineWeight    = 3,
+            size             = fontSize,
+        }
     }
 
     local el_size = 6
@@ -90,7 +97,7 @@ function loadWindow()
     local heightStr = "12%"
     local padding = 2
 
-    clearButton = Chili.Button:New{
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -102,7 +109,7 @@ function loadWindow()
     }
 
     curr_x = curr_x + el_size + padding
-    clearBeforeLastReset = Chili.Button:New{
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -110,11 +117,11 @@ function loadWindow()
         height = heightStr,
         tooltip = 'show messages since the most recent luaui/luarules reload',
         caption = "show since reload",
-        OnClick = {function() RemoveAllMessages(); SoftReload() end}
+        OnClick = {function() ShowSinceReload() end}
     }
 
     curr_x = curr_x + el_size + padding
-    clearButton = Chili.Button:New{
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -122,23 +129,11 @@ function loadWindow()
         height = heightStr,
         tooltip = 'show all messages',
         caption = "show all",
-        OnClick = {function() RemoveAllMessages(); ReloadAllMessages() end}
+        OnClick = {function() ReloadAllMessages() end}
     }
 
     curr_x = curr_x + el_size + padding
-    hideButton = Chili.Button:New{
-        parent = window,
-        x = ('%f%%'):format(curr_x),
-        bottom = 0,
-        width = widthStr,
-        height = heightStr,
-        tooltip = '',
-        caption = "hide/show (f8)",
-        OnClick = {function() window:SetVisibility(not window.visible) end}
-    }
-
-    curr_x = curr_x + el_size + padding
-    luauiReloadButton = Chili.Button:New{
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -149,18 +144,7 @@ function loadWindow()
     }
 
     curr_x = curr_x + el_size + padding
-    luauiDisableButton = Chili.Button:New{
-        parent = window,
-        x = ('%f%%'):format(curr_x),
-        bottom = 0,
-        width = widthStr,
-        height = heightStr,
-        caption = "luaui disable",
-        OnClick = {function() Spring.SendCommands("luaui disable") end}
-    }
-
-    curr_x = curr_x + el_size + padding
-    luarulesReloadButton = Chili.Button:New{
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -171,7 +155,18 @@ function loadWindow()
     }
 
     curr_x = curr_x + el_size + padding
-    luarulesDisableButton = Chili.Button:New{
+    Chili.Button:New{
+        parent = window,
+        x = ('%f%%'):format(curr_x),
+        bottom = 0,
+        width = widthStr,
+        height = heightStr,
+        caption = "luaui disable",
+        OnClick = {function() Spring.SendCommands("luaui disable") end}
+    }
+
+    curr_x = curr_x + el_size + padding
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -182,7 +177,7 @@ function loadWindow()
     }
 
     curr_x = curr_x + el_size + padding
-    cheatButton = Chili.Button:New{
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -193,7 +188,7 @@ function loadWindow()
     }
 
     curr_x = curr_x + el_size + padding
-    globallosButton = Chili.Button:New{
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -204,7 +199,7 @@ function loadWindow()
     }
 
     curr_x = curr_x + el_size + padding
-    godmodeButton = Chili.Button:New{
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -215,7 +210,7 @@ function loadWindow()
     }
 
     curr_x = curr_x + el_size + padding
-    reloadButton = Chili.Button:New{
+    Chili.Button:New{
         parent = window,
         x = ('%f%%'):format(curr_x),
         bottom = 0,
@@ -223,6 +218,18 @@ function loadWindow()
         height = heightStr,
         caption = "Spring.Reload",
         OnClick = {function() Spring.Reload(VFS.LoadFile("_script.txt")) end} -- this file is (hopefully) the script.txt used to most recently start spring
+    }
+
+    curr_x = curr_x + el_size + padding
+    Chili.Button:New{
+        parent = window,
+        x = ('%f%%'):format(curr_x),
+        bottom = 0,
+        width = widthStr,
+        height = heightStr,
+        tooltip = '',
+        caption = "hide/show (f8)",
+        OnClick = {function() window:SetVisibility(not window.visible) end}
     }
 end
 
@@ -328,12 +335,15 @@ function widget:AddConsoleLine(msg)
     if ignore then return end
 
     -- check for duplicates
-    for i=0,dedup-1 do
-        local prevMsg = log.children[#log.children - i]
+    for i=0, dedup-1 do
+        local prevMsg = log.lines[#log.lines - i]
         if prevMsg and (text == prevMsg.text or text == prevMsg.origText) then
+            if not prevMsg.duplicates then
+                prevMsg.duplicates = 1
+            end
             prevMsg.duplicates = prevMsg.duplicates + 1
             prevMsg.origText = text
-            prevMsg:SetText(color.blue ..(prevMsg.duplicates + 1)..'x \b'..text)
+            --log:UpdateLine(#log.lines - 1, color.blue ..(prevMsg.duplicates + 1)..'x \b'..text)
             return
         end
     end
@@ -359,64 +369,52 @@ end
 
 function NewConsoleLine(text)
     -- avoid creating insane numbers of children (chili can't handle it)
-    if #log.children > cfg.msgCap then
-        log:RemoveChild(log.children[1])
-    end
+    -- if #log.children > cfg.msgCap then
+        -- log:RemoveChild(log.children[1])
+    -- end
 
     local filePath, lineNumber, s, e = CheckForLuaFilePath(text)
-    local onMouseDown
+    local OnTextClick
     local tooltip
     if filePath and WG.Connector then
-        tooltip = 'Open: ' .. text:sub(s, e)
-        text = text:sub(1, s-1) ..
-               '\255\150\100\255' ..
-               text:sub(s, e) ..
-               '\b' ..
-               text:sub(1, 4) ..
-               text:sub(e+1)
-        onMouseDown = {
-            function()
-                filePath = filePath:lower()
-                local absPath = VFS.GetFileAbsolutePath(filePath)
-                local archiveName = VFS.GetArchiveContainingFile(filePath)
-                if archiveName ~= (Game.gameName .. " " .. Game.gameVersion) then
-                    return
-                end
+        filePath = filePath:lower()
+        local absPath = VFS.GetFileAbsolutePath(filePath)
+        local archiveName = VFS.GetArchiveContainingFile(filePath)
+        if archiveName == (Game.gameName .. " " .. Game.gameVersion) then
+            tooltip = {
+                startIndex = s + 3,
+                endIndex = e + 3,
+                tooltip = 'Open: ' .. text:sub(s, e)
+            }
+            text = text:sub(1, s-1) ..
+                '\255\150\100\255' ..
+                text:sub(s, e) ..
+                '\b' ..
+                text:sub(1, 4) ..
+                text:sub(e+1)
 
-                WG.Connector.Send("OpenFile", {
-                    path = absPath
-                })
-            end
-        }
+            OnTextClick = {
+                startIndex = s,
+                endIndex = e,
+                OnTextClick = {function()
+
+                    WG.Connector.Send("OpenFile", {
+                        path = absPath
+                    })
+                end}
+            }
+        end
     end
-    -- print text into the console
-    Chili.TextBox:New{
-        parent      = log,
-        text        = text,
-        tooltip     = tooltip,
-        width       = '100%',
-        autoHeight  = true,
-        autoObeyLineHeight = true,
-        align       = "left",
-        valign      = "ascender",
-        padding     = {0,0,0,0},
-        duplicates  = 0,
-        font        = {
-            outline          = true,
-            autoOutlineColor = true,
-            outlineWidth     = 4,
-            outlineWeight    = 3,
-            size             = fontSize,
-        },
-        OnMouseDown = onMouseDown,
-    }
+    log:AddLine(text, {tooltip}, {OnTextClick})
 end
 
 function RemoveAllMessages()
-    log:ClearChildren()
+    log.text = nil
+    log:SetText("")
 end
 
 function ReloadAllMessages(initialLoad)
+    RemoveAllMessages()
     local reloadCount = 0
     local buffer = Spring.GetConsoleBuffer(cfg.reloadLines)
     for _,l in ipairs(buffer) do
@@ -431,13 +429,13 @@ function ReloadAllMessages(initialLoad)
     end
 end
 
-function SoftReload()
+function ShowSinceReload()
+    RemoveAllMessages()
     local buffer = Spring.GetConsoleBuffer(cfg.reloadLines)
     for _,l in ipairs(buffer) do
         if sfind(l.text,"LuaUI Entry Point") or sfind(l.text,"LuaRules Entry Point") then
             RemoveAllMessages()
         end
-
         widget:AddConsoleLine(l.text)
     end
 end
