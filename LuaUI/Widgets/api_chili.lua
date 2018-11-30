@@ -32,6 +32,10 @@ local tf
 -- Chili's location
 
 CHILI_DIRNAME = "libs/chiliui/luaui/chili/chili/"
+LUA_DIRNAME = LUA_DIRNAME or "LuaUI/"
+SKIN_DIRNAME  = LUA_DIRNAME .. "Configs/chili/skins/"
+THEME_DIRNAME = LUA_DIRNAME .. "Configs/chili/themes/"
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -164,10 +168,10 @@ end
 
 
 local keyPressed = true
-function widget:KeyPress(key, mods_, isRepeat, label, unicode)
+function widget:KeyPress(key, mods, isRepeat, label, unicode)
 	if Spring.IsGUIHidden() then return false end
 
-	keyPressed = screen0:KeyPress(key, mods_, isRepeat, label, unicode)
+	keyPressed = screen0:KeyPress(key, mods, isRepeat, label, unicode)
 	return keyPressed
 end
 
