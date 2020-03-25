@@ -1,6 +1,6 @@
 {
     "title" : "SkeletonGame",
-    "setups" : [  
+    "setups" : [
       {
         "package": {
           "id": "dev",
@@ -8,7 +8,7 @@
         },
         "downloads": {
           "maps" : ["Obsidian_1.5"],
-          "engines" : [ "104.0.1-909-g82a205f maintenance" ]
+          "engines" : [ "104.0.1-1464-g4f428c8 maintenance" ]
         },
         "auto_start" : false,
         "no_downloads" : true,
@@ -16,7 +16,20 @@
           "game": "SkeletonGame $VERSION",
           "map": "Obsidian_1.5"
         }
+      },
+      {
+        "package": {
+          "id": "develop-engine",
+          "display": "DevelopEngine"
+        },
+        "downloads": {
+          "maps" : ["Obsidian_1.5"],
+          "engines" : [ "104.0.1-2020-ga942be9 develop" ]
+        },
+        "launch": {
+          "game": "SkeletonGame $VERSION",
+          "map": "Obsidian_1.5"
+        }
       }
     ]
-  }
-  
+}
