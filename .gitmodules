@@ -1,0 +1,24 @@
+[submodule "libs/chiliui"]
+	path = libs/chiliui
+	url = https://github.com/gajop/chiliui.git
+[submodule "libs/chonsole"]
+	path = libs/chonsole
+	url = https://github.com/gajop/chonsole.git
+[submodule "libs/chotify"]
+	path = libs/chotify
+	url = https://github.com/gajop/chotify.git
+[submodule "libs/i18n"]
+	path = libs/i18n
+	url = https://github.com/gajop/i18n.git
+[submodule "libs/lcs"]
+	path = libs/lcs
+	url = https://github.com/gajop/Lua-Class-System.git
+[submodule "libs/s11n"]
+	path = libs/s11n
+	url = https://github.com/gajop/s11n
+[submodule "libs/spring-launcher"]
+	path = libs/spring-launcher
+	url = https://github.com/gajop/spring-launcher-lib.git
+[submodule "libs/springmon"]
+	path = libs/springmon
+	url = https://github.com/gajop/springmon.git

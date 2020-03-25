@@ -31,11 +31,11 @@ local tf
 --------------------------------------------------------------------------------
 -- Chili's location
 
-CHILI_DIRNAME = "libs/chiliui/luaui/chili/chili/"
-LUA_DIRNAME = LUA_DIRNAME or "LuaUI/"
-SKIN_DIRNAME  = LUA_DIRNAME .. "Configs/chili/skins/"
-THEME_DIRNAME = LUA_DIRNAME .. "Configs/chili/themes/"
+local function GetDirectory(filepath)
+	return filepath and filepath:gsub("(.*/)(.*)", "%1")
+end
 
+CHILI_DIRNAME = "libs/chiliui/luaui/chili/chili/"
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
