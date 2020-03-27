@@ -22,3 +22,6 @@
 [submodule "libs/springmon"]
 	path = libs/springmon
 	url = https://github.com/gajop/springmon.git
+[submodule "libs/chilifx"]
+	path = libs/chilifx
+	url = https://github.com/gajop/chilifx.git

@@ -13,7 +13,7 @@ end
 
 local LOG_SECTION = "Deferred rendering test"
 
-local START_LIGHTS = 100
+local START_LIGHTS = 0
 
 
 local lights = {}
